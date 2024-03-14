@@ -10,6 +10,9 @@ body{
 .mainTopPanel{
   width: 100vw;
   height: 56vh;
+
+  background-image: url('./res/homeBackground.png');
+  background-size: 100vw;
 }
 
 .mainBottomPanel{

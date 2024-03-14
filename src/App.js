@@ -1,7 +1,9 @@
-import { GiHamburgerMenu} from "react-icons/gi";
-import { FiPlus} from "react-icons/fi";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { FaHome } from "react-icons/fa";
+import { PiSquaresFourFill } from "react-icons/pi";
+import { IoIosSettings } from "react-icons/io";
 
-import {useState, useRef} from 'react';
+import {useState} from 'react';
 import './App.css';
 
 let tiles = [];
@@ -60,25 +62,18 @@ export default function mainPage(){
   }
 
   return(
-    /*<div style={{width: tileSize * Math.sqrt(tileNum), margin: '0 auto'}}>
-      <div>{tiles}</div>
-      <ColorPicker/>
-      <button onClick={() => sendMatrix()}>Send</button>
-    </div>*/
     <div style={{width: '100vw', height: '100vh', backgroundColor: '#F8B47F', overflow: 'hidden'}}>
       <div className="mainTopPanel">
         <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
          <GiHamburgerMenu size={'3vh'}/>
         </div>
-        <h1 style={{margin: '1vh 0 0 2.5vw', fontSize: '4vh'}}>Hello There!</h1>
+        <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
       </div>
-      <div className="mainBottomPanel" style={{display: 'block', textAlign: 'center'}}>
-        <h1 style={{fontSize: '3.5vh'}}>Your thingamajigs</h1>
-        <div style={{width: '100vw', paddingLeft: '3vh'}}>
-
-        </div>
-        <div style={{width: '100vw', display: "flex", justifyContent: 'center', position: 'absolute', bottom: '5vh'}}>
-          <Button width='30vh' height='6vh' backgroundColor='#A16354' color='#FFF6E8' text='Add new matrix'/>
+      <div className="mainBottomPanel" style={{display: 'block', textAlign: 'center', fontSize: '1.5vh'}}>
+        <h1>Your matrices</h1>
+         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
+          {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
+          <FaHome size='4vh' style={{margin: '0 5vh 0 5vh'}}/><PiSquaresFourFill size='4vh' style={{margin: '0 5vh 0 5vh'}}/><IoIosSettings size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
       </div>
     </div>
