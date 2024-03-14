@@ -1,4 +1,5 @@
-import { GiHamburgerMenu  } from "react-icons/gi";
+import { GiHamburgerMenu} from "react-icons/gi";
+import { FiPlus} from "react-icons/fi";
 
 import {useState, useRef} from 'react';
 import './App.css';
@@ -69,11 +70,15 @@ export default function mainPage(){
         <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
          <GiHamburgerMenu size={'3vh'}/>
         </div>
-        <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
+        <h1 style={{margin: '1vh 0 0 2.5vw', fontSize: '4vh'}}>Hello There!</h1>
       </div>
-      <div className="mainBottomPanel" style={{display: 'block'}}>
+      <div className="mainBottomPanel" style={{display: 'block', textAlign: 'center'}}>
+        <h1 style={{fontSize: '3.5vh'}}>Your thingamajigs</h1>
+        <div style={{width: '100vw', paddingLeft: '3vh'}}>
+
+        </div>
         <div style={{width: '100vw', display: "flex", justifyContent: 'center', position: 'absolute', bottom: '5vh'}}>
-          <Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>
+          <Button width='30vh' height='6vh' backgroundColor='#A16354' color='#FFF6E8' text='Add new matrix'/>
         </div>
       </div>
     </div>
