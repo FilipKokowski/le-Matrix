@@ -49,6 +49,44 @@ function Button({width, height, backgroundColor, color, text}){
   );
 }
 
+function Boards(){
+  return (
+    <div>
+      <h1>Your boards</h1>
+      <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
+        <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
+          <FaPlus size={'10vh'} color="#DBCFC2"/>
+        </div>
+        <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
+          <FaPlus size={'10vh'} color="#DBCFC2"/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BottomPanel(screen){
+  if(screen === "home")
+    return (<h1>Home</h1>);
+  else if(screen === "boards")
+    return (<Boards/>);
+  else if(screen === "settings")
+    return (<h1>Settings</h1>);
+  else
+    return (<h1>Doo doo</h1>);
+}
+
+function swapClasses(firstClass, secondClass){
+    if(document.getElementById('mainBottomPanel').classList.contains(secondClass) || !document.getElementById('mainBottomPanel').classList.contains(firstClass)){
+      document.getElementById('mainBottomPanel').className = '';
+      document.getElementById('mainBottomPanel').classList.add(firstClass);
+    }
+    else{
+      document.getElementById('mainBottomPanel').className = '';
+      document.getElementById('mainBottomPanel').classList.add(secondClass);
+    }
+}
+
 export default function mainPage(){
 
   tiles = [];
@@ -63,31 +101,21 @@ export default function mainPage(){
   }
 
   return(
-    <div style={{width: '100vw', height: '100vh', backgroundColor: '#F8B47F', overflow: 'hidden'}}>
+    <div style={{width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <div className="mainTopPanel">
         <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
          <GiHamburgerMenu size={'3vh'}/>
         </div>
         <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
       </div>
-      <div className="mainBottomPanel" style={{display: 'block', textAlign: 'center', fontSize: '1.5vh'}}>
-        <h1>Your boards</h1>
-        <div id='slider' style={{height: '15vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}>
-          
-        <div style={{width: '15vh', height: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 5vh 0 0'}}>
-          <FaPlus size={'10vh'} color="#DBCFC2"/>
-        </div>
-        <div style={{width: '15vh', height: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 0 0 0'}}>
-          <FaPlus size={'10vh'} color="#DBCFC2"/>
-        </div>
-          
-
-
-        </div>
+      <div id="mainBottomPanel">
+          <BottomPanel screen={"boards"}/>
          <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
-          {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
-          <FaHome size='4vh' style={{margin: '0 5vh 0 5vh'}}/><PiSquaresFourFill size='4vh' style={{margin: '0 5vh 0 5vh'}}/><IoIosSettings size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-        </div>
+            {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
+            <FaHome onClick={() => {swapClasses('homeOn','homeOff')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill onClick={() => {swapClasses('boardsOn','boardsOff')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <IoIosSettings onClick= {() => { console.log('Settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+          </div>
       </div>
     </div>
   );
