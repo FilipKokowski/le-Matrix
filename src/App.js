@@ -2,6 +2,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { FaHome } from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
 
 import {useState} from 'react';
 import './App.css';
@@ -70,7 +71,19 @@ export default function mainPage(){
         <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
       </div>
       <div className="mainBottomPanel" style={{display: 'block', textAlign: 'center', fontSize: '1.5vh'}}>
-        <h1>Your matrices</h1>
+        <h1>Your boards</h1>
+        <div id='slider' style={{height: '15vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}>
+          
+        <div style={{width: '15vh', height: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 5vh 0 0'}}>
+          <FaPlus size={'10vh'} color="#DBCFC2"/>
+        </div>
+        <div style={{width: '15vh', height: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 0 0 0'}}>
+          <FaPlus size={'10vh'} color="#DBCFC2"/>
+        </div>
+          
+
+
+        </div>
          <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
           {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
           <FaHome size='4vh' style={{margin: '0 5vh 0 5vh'}}/><PiSquaresFourFill size='4vh' style={{margin: '0 5vh 0 5vh'}}/><IoIosSettings size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
