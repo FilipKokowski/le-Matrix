@@ -1,4 +1,3 @@
-import { GiHamburgerMenu } from "react-icons/gi";
 import { FaHome } from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
@@ -14,14 +13,14 @@ let color = 'rgb(255,0,0)';
 
 function Tile({size, text}){
 
-  const [currentColor, setBgColor] = useState('rgb(255,0,0)');
+  const [currentColor, setBgColor] = useState('rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')');
   const changeColor = () => {
     setBgColor(color);
     tilesColors[text - 1] = color;
   }
 
   return(
-    <div onClick={changeColor} style={{width: size, height: size, backgroundColor: currentColor, borderRadius: size / 10, float: 'left', border: (size / 25) + 'px solid rgb(128,0,0)', boxSizing: 'border-box'}}>{text}</div>
+    <div onClick={changeColor} style={{width: size, height: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
   );
 }
 
@@ -43,21 +42,63 @@ function ColorPicker(){
   );
 }
 
+function Board({id, inner}){
+  if(id)
+    return (
+      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
+        {/* Thumbnail of the board*/}
+        {inner}
+      </div>
+    )
+  else
+    return (
+      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
+        <FaPlus size={'10vh'} color="#DBCFC2"/>
+      </div>
+    )
+}
+
+function Home(){
+  const boardThumbnailSize = window.innerHeight / 100 * 15;
+  
+  tiles = [];
+  let tileNum = 225;
+  let tileSize = boardThumbnailSize / 15;
+
+
+  for(let row = 0; row < Math.sqrt(tileNum); row++){
+    for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
+      tiles.push(<Tile size={tileSize}/>)
+    }
+  }
+
+  return (
+    <div>
+      <h1>Home</h1>
+      <div>
+        <Board id='2' inner={tiles}/>
+        <h2>Random shit</h2>
+        <h3>Set since 11.09.2001</h3>
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66'}}>Change board</button>
+      
+      
+      </div>
+    </div>
+  );
+}
+
 function Boards(){
   return (
     <div>
       <h1>Your boards</h1>
       <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
-        <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
-          <FaPlus size={'10vh'} color="#DBCFC2"/>
-        </div>
-        <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
-          <FaPlus size={'10vh'} color="#DBCFC2"/>
-        </div>
+        <Board/>
+        <Board/>
       </div>
     </div>
   );
 }
+
 
 function swapClasses(firstClass){
   document.getElementById('mainBottomPanel').className = '';
@@ -66,7 +107,7 @@ function swapClasses(firstClass){
 
 function BottomPanelContent({screen}){
   if(screen === "home")
-    return (<h1>Home</h1>);
+    return (<Home/>);
   else if(screen === "boards")
     return (<Boards/>);
   else if(screen === "settings")
@@ -112,12 +153,10 @@ export default function mainPage(){
     <div style={{width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <div className="mainTopPanel">
         <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
-         <GiHamburgerMenu size={'3vh'}/>
+          <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
         </div>
-        <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
         <BottomPanel/>
       </div>
-      
     </div>
   );
 }
