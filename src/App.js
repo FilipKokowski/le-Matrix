@@ -43,12 +43,6 @@ function ColorPicker(){
   );
 }
 
-function Button({width, height, backgroundColor, color, text}){
-  return (
-    <button onClick={() => {console.log('clicked')}}style={{width: width, height: height, color: color, backgroundColor: backgroundColor, border: 'none', borderRadius: '1.5vh', fontSize: '2.25vh', fontWeight: 'bold'}}>{text}</button>
-  );
-}
-
 function Boards(){
   return (
     <div>
@@ -65,7 +59,12 @@ function Boards(){
   );
 }
 
-function BottomPanel(screen){
+function swapClasses(firstClass){
+  document.getElementById('mainBottomPanel').className = '';
+  document.getElementById('mainBottomPanel').classList.add(firstClass);
+}
+
+function BottomPanelContent({screen}){
   if(screen === "home")
     return (<h1>Home</h1>);
   else if(screen === "boards")
@@ -76,15 +75,24 @@ function BottomPanel(screen){
     return (<h1>Doo doo</h1>);
 }
 
-function swapClasses(firstClass, secondClass){
-    if(document.getElementById('mainBottomPanel').classList.contains(secondClass) || !document.getElementById('mainBottomPanel').classList.contains(firstClass)){
-      document.getElementById('mainBottomPanel').className = '';
-      document.getElementById('mainBottomPanel').classList.add(firstClass);
-    }
-    else{
-      document.getElementById('mainBottomPanel').className = '';
-      document.getElementById('mainBottomPanel').classList.add(secondClass);
-    }
+function BottomPanel(){
+  const [currentScreen, setCurrentScreen] = useState("home"); // Initial screen is "boards"
+
+  const swapScreens = (screen) => {
+    setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
+  };
+
+  return (
+    <div id="mainBottomPanel" className="homeOn">
+      <BottomPanelContent screen={currentScreen}/>
+        <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
+            {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
+            <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+        </div>
+    </div>
+  );
 }
 
 export default function mainPage(){
@@ -107,16 +115,9 @@ export default function mainPage(){
          <GiHamburgerMenu size={'3vh'}/>
         </div>
         <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
+        <BottomPanel/>
       </div>
-      <div id="mainBottomPanel">
-          <BottomPanel screen={"boards"}/>
-         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
-            {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
-            <FaHome onClick={() => {swapClasses('homeOn','homeOff')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <PiSquaresFourFill onClick={() => {swapClasses('boardsOn','boardsOff')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <IoIosSettings onClick= {() => { console.log('Settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-          </div>
-      </div>
+      
     </div>
   );
 }
