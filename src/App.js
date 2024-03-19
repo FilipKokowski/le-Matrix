@@ -11,6 +11,7 @@ let tilesColors = {};
 
 let color = 'rgb(255,0,0)';
 
+//Tile representing one pixel on the board
 function Tile({size, text}){
 
   const [currentColor, setBgColor] = useState('rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')');
@@ -42,6 +43,7 @@ function ColorPicker(){
   );
 }
 
+//Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 function Board({id, inner}){
   if(id)
     return (
@@ -58,6 +60,7 @@ function Board({id, inner}){
     )
 }
 
+//Navbar destinations
 function Home(){
   const boardThumbnailSize = window.innerHeight / 100 * 15;
   
@@ -79,7 +82,7 @@ function Home(){
         <Board id='2' inner={tiles}/>
         <h2>Random shit</h2>
         <h3>Set since 11.09.2001</h3>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66'}}>Change board</button>
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66', color: '#FFF6E8'}}>Change board</button>
       
       
       </div>
@@ -99,21 +102,34 @@ function Boards(){
   );
 }
 
+function Settings(){
+  return(
+    <div>
+      <h1>Settings</h1>
+      <div style={{display: 'flex', flexDirection: 'column', height: '47vh', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
+        <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access settings</h2>
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+      </div>
+    </div>
+  );
+}
 
+//Toggles transitions between navbar destinations
 function swapClasses(firstClass){
   document.getElementById('mainBottomPanel').className = '';
   document.getElementById('mainBottomPanel').classList.add(firstClass);
 }
 
+//Manages bottom panel
 function BottomPanelContent({screen}){
   if(screen === "home")
     return (<Home/>);
   else if(screen === "boards")
     return (<Boards/>);
   else if(screen === "settings")
-    return (<h1>Settings</h1>);
+    return (<Settings/>);
   else
-    return (<h1>Doo doo</h1>);
+    return (<h1>Error: Screen not found</h1>);
 }
 
 function BottomPanel(){
@@ -136,6 +152,8 @@ function BottomPanel(){
   );
 }
 
+
+//Main screen
 export default function mainPage(){
 
   tiles = [];
