@@ -11,6 +11,8 @@ let tilesColors = {};
 
 let color = 'rgb(255,0,0)';
 
+let connected = false;
+
 //Tile representing one pixel on the board
 function Tile({size, text}){
 
@@ -62,6 +64,7 @@ function Board({id, inner}){
 
 //Navbar destinations
 function Home(){
+  if(connected){
   const boardThumbnailSize = window.innerHeight / 100 * 15;
   
   tiles = [];
@@ -88,26 +91,41 @@ function Home(){
       </div>
     </div>
   );
+  }
+  else return <NoConnection screen='home'/>
+
 }
 
 function Boards(){
-  return (
-    <div>
-      <h1>Your boards</h1>
-      <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
-        <Board/>
-        <Board/>
+  if(connected)
+    return (
+      <div>
+        <h1>Your boards</h1>
+        <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
+          <Board/>
+          <Board/>
+        </div>
       </div>
-    </div>
-  );
+    );
+  else return <NoConnection screen='boards'/>
 }
 
 function Settings(){
+  if(connected)
+    return(
+      <div>
+        <h1>Settings</h1>
+      </div>
+    );
+  else return <NoConnection screen='settings'/>
+}
+
+function NoConnection({screen}){
   return(
-    <div>
-      <h1>Settings</h1>
-      <div style={{display: 'flex', flexDirection: 'column', height: '47vh', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
-        <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access settings</h2>
+    <div style={{height: '100%'}}>
+      <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
+      <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
+        <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
         <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
       </div>
     </div>
