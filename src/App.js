@@ -1,9 +1,10 @@
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaInstagram} from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { FaPlus } from "react-icons/fa6";
+import { FaI, FaPlus, FaPowerOff } from "react-icons/fa6";
 
-import {useState} from 'react';
+
+import {useState, useEffect} from 'react';
 import './App.css';
 
 let tiles = [];
@@ -11,7 +12,8 @@ let tilesColors = {};
 
 let color = 'rgb(255,0,0)';
 
-let connected = false;
+let connected = true;
+let togglePower = false;
 
 //Tile representing one pixel on the board
 function Tile({size, text}){
@@ -43,6 +45,13 @@ function ColorPicker(){
       <div style={{width: '10vw', height: '10vw', backgroundColor: currentColor}}></div>
     </div>
   );
+}
+
+function PowerButton(){
+  const [currentMode, setMode] = useState(togglePower);
+  const changeColor = () => { setMode(!currentMode); togglePower = currentMode; }
+
+  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#e97366' : '#83cc83', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#d15c4f' : '#5fba5f'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
@@ -81,13 +90,22 @@ function Home(){
   return (
     <div>
       <h1>Home</h1>
-      <div>
+      <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#F5E7D9', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
         <Board id='2' inner={tiles}/>
-        <h2>Random shit</h2>
+        <h2 style={{marginTop: '0'}}>Random shit</h2>
         <h3>Set since 11.09.2001</h3>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66', color: '#FFF6E8'}}>Change board</button>
-      
-      
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
+      </div>
+      <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
+        <div>
+          <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#cbebf2', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
+            <FaInstagram size='75%' color='#aadbe6'/>
+          </div>
+          <PowerButton/>
+        </div>
+        <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '2vh'}}>
+          <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
+        </div>   
       </div>
     </div>
   );
@@ -115,6 +133,13 @@ function Settings(){
     return(
       <div>
         <h1>Settings</h1>
+        <div>
+
+        </div>
+        <div style={{width: '100vw', display: 'flex', justifyContent: 'center', position: 'absolute', bottom: '25%'}}>
+          <button style={{width: '17.5vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '1.75vh', fontWeight: 'bold', marginRight: '4vh'}}>Clear database</button>
+          <button style={{width: '17.5vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '1.75vh', fontWeight: 'bold'}}>Disconnect</button>
+        </div>
       </div>
     );
   else return <NoConnection screen='settings'/>
@@ -126,7 +151,7 @@ function NoConnection({screen}){
       <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
       <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
         <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
       </div>
     </div>
   );
@@ -158,7 +183,7 @@ function BottomPanel(){
   };
 
   return (
-    <div id="mainBottomPanel" className="homeOn">
+    <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
             {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
