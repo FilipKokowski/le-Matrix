@@ -50,8 +50,8 @@ function ColorPicker(){
 function PowerButton(){
   const [currentMode, setMode] = useState(togglePower);
   const changeColor = () => { setMode(!currentMode); togglePower = currentMode; }
-
-  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#e97366' : '#83cc83', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#d15c4f' : '#5fba5f'}/></div>
+  
+  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#3f9e3f', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#83cc83'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
@@ -83,7 +83,7 @@ function Home(){
 
   for(let row = 0; row < Math.sqrt(tileNum); row++){
     for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile size={tileSize}/>)
+      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
     }
   }
 
@@ -92,14 +92,14 @@ function Home(){
       <h1>Home</h1>
       <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#F5E7D9', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
         <Board id='2' inner={tiles}/>
-        <h2 style={{marginTop: '0'}}>Random shit</h2>
+        <h2 style={{marginTop: '0'}}>Random colors</h2>
         <h3>Set since 11.09.2001</h3>
         <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
       </div>
       <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
         <div>
-          <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#cbebf2', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
-            <FaInstagram size='75%' color='#aadbe6'/>
+          <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
+            <FaInstagram size='75%' color='white'/>
           </div>
           <PowerButton/>
         </div>
@@ -134,11 +134,11 @@ function Settings(){
       <div>
         <h1>Settings</h1>
         <div>
-
-        </div>
-        <div style={{width: '100vw', display: 'flex', justifyContent: 'center', position: 'absolute', bottom: '25%'}}>
-          <button style={{width: '17.5vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '1.75vh', fontWeight: 'bold', marginRight: '4vh'}}>Clear database</button>
-          <button style={{width: '17.5vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '1.75vh', fontWeight: 'bold'}}>Disconnect</button>
+          <div style={{marginLeft: '2vh', margin: '0 auto', width: '42.5vh', height: '19vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/hampster.webp')}></img></div>
+          <div style={{width: '100vw', display: 'flex', justifyContent: 'center', position: 'absolute', bottom: '25%'}}>
+            <button style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}>Clear database</button>
+            <button style={{width: '26vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}>Disconnect</button>
+          </div>
         </div>
       </div>
     );
@@ -176,7 +176,7 @@ function BottomPanelContent({screen}){
 }
 
 function BottomPanel(){
-  const [currentScreen, setCurrentScreen] = useState("home"); // Initial screen is "boards"
+  const [currentScreen, setCurrentScreen] = useState("settings"); // Initial screen is "boards"
 
   const swapScreens = (screen) => {
     setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
