@@ -13,8 +13,13 @@
   transition: height .5s ease;
 }
 
+.connectOn{
+  height: 57vh;
+  transition: height .5s ease;
+}
+
 html{
-  color: #451800;
+  color: #cfc1c1;
 }
 
 body{
@@ -36,7 +41,7 @@ body{
   position: absolute;
   bottom: -2.5vh;
 
-  background-color: #FFF6E8;
+  background-color: #2a2e32;
   border-radius: 2.5vh;
 
   display: block;

@@ -1,8 +1,9 @@
-import { FaHome, FaInstagram} from "react-icons/fa";
+import { FaHome, FaInstagram, FaMoon} from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { FaI, FaPlus, FaPowerOff } from "react-icons/fa6";
-
+import { FaPlus, FaPowerOff } from "react-icons/fa6";
+import { MdDeleteSweep } from "react-icons/md";
+import { IoLogInOutline } from "react-icons/io5";
 
 import {useState, useEffect} from 'react';
 import './App.css';
@@ -51,22 +52,22 @@ function PowerButton(){
   const [currentMode, setMode] = useState(togglePower);
   const changeColor = () => { setMode(!currentMode); togglePower = currentMode; }
   
-  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#3f9e3f', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#83cc83'}/></div>
+  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 function Board({id, inner}){
   if(id)
     return (
-      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
+      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
         {/* Thumbnail of the board*/}
         {inner}
       </div>
     )
   else
     return (
-      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#F5E7D9', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
-        <FaPlus size={'10vh'} color="#DBCFC2"/>
+      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
+        <FaPlus size={'10vh'} color="#494e52"/>
       </div>
     )
 }
@@ -90,11 +91,11 @@ function Home(){
   return (
     <div>
       <h1>Home</h1>
-      <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#F5E7D9', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
+      <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
         <Board id='2' inner={tiles}/>
         <h2 style={{marginTop: '0'}}>Random colors</h2>
         <h3>Set since 11.09.2001</h3>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
+        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
       </div>
       <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
         <div>
@@ -134,10 +135,13 @@ function Settings(){
       <div>
         <h1>Settings</h1>
         <div>
-          <div style={{marginLeft: '2vh', margin: '0 auto', width: '42.5vh', height: '19vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/hampster.webp')}></img></div>
-          <div style={{width: '100vw', display: 'flex', justifyContent: 'center', position: 'absolute', bottom: '25%'}}>
-            <button style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}>Clear database</button>
-            <button style={{width: '26vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}>Disconnect</button>
+          <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
+            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/hampster.webp')}></img></div>
+            <button style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
+          </div>
+          <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
+            <button style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}><MdDeleteSweep size={'50%'} color="#f0a49c"/></button>
+            <button style={{width: '26vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><IoLogInOutline size={'50%'} color="#fcd4b6"/></button>
           </div>
         </div>
       </div>
@@ -145,13 +149,25 @@ function Settings(){
   else return <NoConnection screen='settings'/>
 }
 
+function Connect(){
+  return(
+    <div>
+      <h1>Connect</h1>
+    </div>
+  );
+}
+
 function NoConnection({screen}){
+  const [connectionScreen, set] = useState(false);
+
+  const swapScreens = () => { set(!connectionScreen); connected = connectionScreen; console.log(connected)};
+
   return(
     <div style={{height: '100%'}}>
       <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
       <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
         <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+        <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
       </div>
     </div>
   );
@@ -171,12 +187,14 @@ function BottomPanelContent({screen}){
     return (<Boards/>);
   else if(screen === "settings")
     return (<Settings/>);
+  else if(screen === "connect")
+    return <Connect/>
   else
     return (<h1>Error: Screen not found</h1>);
 }
 
 function BottomPanel(){
-  const [currentScreen, setCurrentScreen] = useState("settings"); // Initial screen is "boards"
+  const [currentScreen, setCurrentScreen] = useState("home"); // Initial screen is "boards"
 
   const swapScreens = (screen) => {
     setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
@@ -185,7 +203,7 @@ function BottomPanel(){
   return (
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen}/>
-        <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#BD7F4D'}}>
+        <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
             {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
             <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <PiSquaresFourFill onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
