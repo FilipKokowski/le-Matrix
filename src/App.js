@@ -17,7 +17,7 @@ let connected = true;
 let togglePower = false;
 
 //Tile representing one pixel on the board
-function Tile({size, text}){
+function Tile({size, text, editable}){
 
   const [currentColor, setBgColor] = useState('rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')');
   const changeColor = () => {
@@ -26,7 +26,7 @@ function Tile({size, text}){
   }
 
   return(
-    <div onClick={changeColor} style={{width: size, height: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
+    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
   );
 }
 
@@ -136,7 +136,7 @@ function Settings(){
         <h1>Settings</h1>
         <div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/hampster.webp')}></img></div>
+            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/face.jpg')}></img></div>
             <button style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
           </div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
@@ -167,7 +167,7 @@ function NoConnection({screen}){
       <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
       <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
         <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
-        <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+        <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
       </div>
     </div>
   );
@@ -204,7 +204,6 @@ function BottomPanel(){
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
-            {/*<Button width='30vh' height='6vh' backgroundColor='#BD7F4D' color='#451800' text='Add new matrix'/>*/}
             <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <PiSquaresFourFill onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
