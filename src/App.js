@@ -13,7 +13,7 @@ let tilesColors = {};
 
 let color = 'rgb(255,0,0)';
 
-let connected = true;
+let connected = false;
 let togglePower = false;
 
 //Tile representing one pixel on the board
@@ -149,29 +149,33 @@ function Settings(){
   else return <NoConnection screen='settings'/>
 }
 
-function Connect(){
-  return(
-    <div>
-      <h1>Connect</h1>
-    </div>
-  );
-}
-
 function NoConnection({screen}){
-  const [connectionScreen, set] = useState(false);
+  const [connectionScreen, set] = useState(true);
 
-  const swapScreens = () => { set(!connectionScreen); connected = connectionScreen; console.log(connected)};
+  const swapScreens = () => { 
+    set(!connectionScreen); 
+  };
 
-  return(
-    <div style={{height: '100%'}}>
-      <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
-      <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
-        <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
-        <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+  if(connectionScreen)
+    return(
+      <div style={{height: '100%'}}>
+        <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
+        <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
+          <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
+          <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+    else return (
+      <div style={{height: '100%'}}>
+        <h1>Connect</h1>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%'}}>
+          <h2>Input board code</h2>
+          <input type='text' maxLength="4" style={{border: 'none', width: '30vh', height: '7vh', borderRadius: '2vh', backgroundColor: '#212529', fontSize: '3vh'}}></input>
+        </div>
+      </div>
+    );
+  }
 
 //Toggles transitions between navbar destinations
 function swapClasses(firstClass){
@@ -187,8 +191,6 @@ function BottomPanelContent({screen}){
     return (<Boards/>);
   else if(screen === "settings")
     return (<Settings/>);
-  else if(screen === "connect")
-    return <Connect/>
   else
     return (<h1>Error: Screen not found</h1>);
 }
@@ -199,6 +201,7 @@ function BottomPanel(){
   const swapScreens = (screen) => {
     setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
   };
+  
 
   return (
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
