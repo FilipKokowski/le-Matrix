@@ -218,26 +218,34 @@ function BottomPanel(){
 
 //Main screen
 export default function mainPage(){
+  
+  if(/android|iphone|kindle|ipad/i.test(navigator.userAgent)){
+    tiles = [];
+    let tileNum = 121;
+    let tileSize = window.innerWidth / tileNum * (Math.sqrt(tileNum) * (9/10));
 
-  tiles = [];
-  let tileNum = 121;
-  let tileSize = window.innerWidth / tileNum * (Math.sqrt(tileNum) * (9/10));
 
-
-  for(let row = 0; row < Math.sqrt(tileNum); row++){
-    for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile size={tileSize} text={1 + row * Math.sqrt(tileNum) + tile}/>)
+    for(let row = 0; row < Math.sqrt(tileNum); row++){
+      for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
+        tiles.push(<Tile size={tileSize} text={1 + row * Math.sqrt(tileNum) + tile}/>)
+      }
     }
-  }
 
-  return(
-    <div style={{width: '100vw', height: '100vh', overflow: 'hidden'}}>
-      <div className="mainTopPanel">
-        <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
-          <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
+    return(
+      <div style={{width: '100vw', height: '100vh', overflow: 'hidden'}}>
+        <div className="mainTopPanel">
+          <div style={{width: '100vw', height: '2.5vh', paddingTop: '2.5vh', paddingLeft: '2.5vw'}}>
+            <h1 style={{margin: '1vh 0 0 2.5vw'}}>Hello There!</h1>
+          </div>
+          <BottomPanel/>
         </div>
-        <BottomPanel/>
       </div>
-    </div>
-  );
+    )
+  }
+  else
+    return(
+      <div style={{width: '100vw', height: '100vh', backgroundColor: '#212529', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <h1>Page only avaiable on mobile devices</h1>
+      </div>
+    );
 }
