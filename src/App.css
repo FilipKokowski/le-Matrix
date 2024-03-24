@@ -58,7 +58,7 @@ body{
   scrollbar-width: none;  /* Firefox */
 }
 
-textarea:focus, input:focus{
+textarea:focus, input:focus, input{
   outline: none;
   color: #cfc1c1;
   text-align: center;

@@ -5,8 +5,12 @@ import { FaPlus, FaPowerOff } from "react-icons/fa6";
 import { MdDeleteSweep } from "react-icons/md";
 import { IoLogInOutline } from "react-icons/io5";
 
-import {useState, useEffect} from 'react';
+import { createClient } from "@supabase/supabase-js";
+
+import {useState, React, setState} from 'react';
 import './App.css';
+
+const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
 
 let tiles = [];
 let tilesColors = {};
@@ -74,48 +78,58 @@ function Board({id, inner}){
 
 //Navbar destinations
 function Home(){
+  const [val, set] = useState(false);
+  const update = () => {
+    set(!val);
+  };
+
   if(connected){
-  const boardThumbnailSize = window.innerHeight / 100 * 15;
-  
-  tiles = [];
-  let tileNum = 225;
-  let tileSize = boardThumbnailSize / 15;
+    const boardThumbnailSize = window.innerHeight / 100 * 15;
+    
+    tiles = [];
+    let tileNum = 225;
+    let tileSize = boardThumbnailSize / 15;
 
 
-  for(let row = 0; row < Math.sqrt(tileNum); row++){
-    for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
+    for(let row = 0; row < Math.sqrt(tileNum); row++){
+      for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
+        tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
+      }
     }
-  }
 
-  return (
-    <div>
-      <h1>Home</h1>
-      <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
-        <Board id='2' inner={tiles}/>
-        <h2 style={{marginTop: '0'}}>Random colors</h2>
-        <h3>Set since 11.09.2001</h3>
-        <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
-      </div>
-      <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
-        <div>
-          <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
-            <FaInstagram size='75%' color='white'/>
-          </div>
-          <PowerButton/>
+    return (
+      <div>
+        <h1>Home</h1>
+        <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
+          <Board id='2' inner={tiles}/>
+          <h2 style={{marginTop: '0'}}>Random colors</h2>
+          <h3>Set since 11.09.2001</h3>
+          <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
         </div>
-        <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '2vh'}}>
-          <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
-        </div>   
+        <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
+          <div>
+            <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
+              <FaInstagram size='75%' color='white'/>
+            </div>
+            <PowerButton/>
+          </div>
+          <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '2vh'}}>
+            <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
+          </div>   
+        </div>
       </div>
-    </div>
-  );
+    );
   }
-  else return <NoConnection screen='home'/>
+  else return <NoConnection screen='home' update={update}/>
 
 }
 
 function Boards(){
+  const [val, set] = useState(false);
+  const update = () => {
+    set(!val);
+  };
+
   if(connected)
     return (
       <div>
@@ -126,10 +140,16 @@ function Boards(){
         </div>
       </div>
     );
-  else return <NoConnection screen='boards'/>
+  else return <NoConnection screen='boards' update={update}/>
 }
 
 function Settings(){
+
+  const [val, set] = useState(false);
+  const update = () => {
+    set(!val);
+  };
+
   if(connected)
     return(
       <div>
@@ -146,36 +166,50 @@ function Settings(){
         </div>
       </div>
     );
-  else return <NoConnection screen='settings'/>
+  else return <NoConnection screen='settings' update={update}/>
 }
 
-function NoConnection({screen}){
-  const [connectionScreen, set] = useState(true);
+async function connectBoard(){
+  const { data } = await supabase.from('boards').select().eq('code', document.getElementById('code').value);
 
-  const swapScreens = () => { 
-    set(!connectionScreen); 
+  return data;
+}
+
+function NoConnection(prop){
+  const [connecting, set] = useState(true);
+
+  const swapScreens = (con) => { 
+    if(con){
+      connected = (con[0]) ? true : false;
+    
+      console.log(con[0]['code']);
+      window.localStorage.setItem('board', con[0]['code']);
+      window.localStorage.getItem('board');
+    }
+    set(!connecting);
   };
 
-  if(connectionScreen)
+  if(connecting)
     return(
       <div style={{height: '100%'}}>
-        <h1>{screen.charAt(0).toUpperCase() + screen.slice(1)}</h1>
+        <h1>{prop.screen.charAt(0).toUpperCase() + prop.screen.slice(1)}</h1>
         <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
-          <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {screen}</h2>
+          <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {prop.screen}</h2>
           <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
         </div>
       </div>
     );
-    else return (
-      <div style={{height: '100%'}}>
-        <h1>Connect</h1>
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%'}}>
-          <h2>Input board code</h2>
-          <input type='text' maxLength="4" style={{border: 'none', width: '30vh', height: '7vh', borderRadius: '2vh', backgroundColor: '#212529', fontSize: '3vh'}}></input>
-        </div>
+  else return (
+    <div style={{height: '100%'}}>
+      <h1>Connect</h1>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%'}}>
+        <h2>Input board code</h2>
+        <input type='text' id='code' maxLength="4" style={{border: 'none', width: '30vh', height: '7vh', borderRadius: '2vh', backgroundColor: '#212529', fontSize: '3vh'}}></input>
+        <button onClick={async () => {swapScreens(await connectBoard()); prop.update()}} style={{width: '12vh', height: '4vh', marginTop: '2vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold'}}>Connect</button>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
 //Toggles transitions between navbar destinations
 function swapClasses(firstClass){
@@ -192,7 +226,7 @@ function BottomPanelContent({screen}){
   else if(screen === "settings")
     return (<Settings/>);
   else
-    return (<h1>Error: Screen not found</h1>);
+    return <h1>No bitches</h1>
 }
 
 function BottomPanel(){
@@ -202,23 +236,24 @@ function BottomPanel(){
     setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
   };
   
-
   return (
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
             <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <PiSquaresFourFill onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill id='boards' onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
     </div>
   );
 }
 
-
 //Main screen
 export default function mainPage(){
-  
+
+  if(window.localStorage.getItem('board'))
+    connected = true;
+
   if(/android|iphone|kindle|ipad/i.test(navigator.userAgent)){
     tiles = [];
     let tileNum = 121;
