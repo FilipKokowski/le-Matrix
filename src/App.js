@@ -1,7 +1,7 @@
 import { FaHome, FaInstagram, FaMoon} from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { FaPlus, FaPowerOff } from "react-icons/fa6";
+import { FaPlus, FaPowerOff, FaBucket, FaEraser } from "react-icons/fa6";
 import { MdDeleteSweep } from "react-icons/md";
 import { IoLogInOutline, IoSend} from "react-icons/io5";
 
@@ -132,7 +132,7 @@ function Home(){
 
 }
 
-function Boards(){
+function Boards(prop){
   const [val, set] = useState(false);
   const update = () => {
     set(!val);
@@ -178,7 +178,11 @@ function BoardAssembler(){
       <div style={{width: '90vw', height: '90vw', maxWidth: '', margin: 'auto'}}>
         {tiles}
       </div>
-      <input type="color"></input>
+      <div style={{height: '10vw', width: '100wv', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
+        <input type="color"></input>
+        <button style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: '#303336'}}><FaBucket size={'75%'} color="#cfc1c1"/></button>
+        <button style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: '#303336'}}><FaEraser size={'75%'} color="#cfc1c1"/></button>
+      </div>
     </div>
   );
 }
@@ -258,7 +262,7 @@ function swapClasses(firstClass){
 //Manages bottom panel
 function BottomPanelContent({screen}){
   if(screen === "home")
-    return (<BoardAssembler/>);
+    return (<Home/>);
   else if(screen === "boards")
     return (<Boards/>);
   else if(screen === "settings")
@@ -277,7 +281,7 @@ function BottomPanel(){
       <BottomPanelContent screen={currentScreen}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
             <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <PiSquaresFourFill id='boards' onClick={() => {swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
     </div>
