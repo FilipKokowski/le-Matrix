@@ -3,11 +3,11 @@ import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
 import { FaPlus, FaPowerOff } from "react-icons/fa6";
 import { MdDeleteSweep } from "react-icons/md";
-import { IoLogInOutline } from "react-icons/io5";
+import { IoLogInOutline, IoSend} from "react-icons/io5";
 
 import { createClient } from "@supabase/supabase-js";
 
-import {useState, React, setState} from 'react';
+import {useState, React, useRef} from 'react';
 import './App.css';
 
 const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
@@ -53,10 +53,17 @@ function ColorPicker(){
 }
 
 function PowerButton(){
-  const [currentMode, setMode] = useState(togglePower);
-  const changeColor = () => { setMode(!currentMode); togglePower = currentMode; }
+
+  const [currentMode, setMode] = useState(localStorage.getItem('power'));
+
+  const changeColor = () => { 
+    setMode(!currentMode); 
+
+    console.log(currentMode)
+    window.localStorage.setItem('power', currentMode);
+}
   
-  return <div onClick={() => {changeColor()}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
+  return <div onClick={ async () => {changeColor(); await supabase.from('system').update({powerOn: currentMode}).eq('code', window.localStorage.getItem('board'))}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
@@ -176,10 +183,12 @@ async function connectBoard(){
 }
 
 function NoConnection(prop){
+  const codeConfirm = useRef();
+
   const [connecting, set] = useState(true);
 
-  const swapScreens = (con) => { 
-    if(con){
+  const swapScreens = (con = []) => { 
+    if(con.length != 0){
       connected = (con[0]) ? true : false;
     
       console.log(con[0]['code']);
@@ -192,20 +201,22 @@ function NoConnection(prop){
   if(connecting)
     return(
       <div style={{height: '100%'}}>
-        <h1>{prop.screen.charAt(0).toUpperCase() + prop.screen.slice(1)}</h1>
+        <h1 style={{fontSize: '8vw'}}>{prop.screen.charAt(0).toUpperCase() + prop.screen.slice(1)}</h1>
         <div style={{display: 'flex', flexDirection: 'column', height: '85%', marginTop: '-8vh', alignItems: 'center', justifyContent: 'center'}}>
-          <h2 style={{color: '#c9bfb5', fontSize: '2.5vh', width: '75vw'}}>Connect to the board to access {prop.screen}</h2>
-          <button onClick={() => {swapScreens()}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '2vh'}}>Connect</button>
+          <h2 style={{fontSize: '5vw', width: '75vw'}}>Connect to the board to access {prop.screen}</h2>
+          <button onClick={() => {swapScreens()}} style={{width: '50vw', height: '12vw', border: 'none', borderRadius: '2vh', backgroundColor: '#2f3236', color: '#cfc1c1', fontWeight: 'bold', fontSize: '4vw'}}>Connect</button>
         </div>
       </div>
     );
   else return (
     <div style={{height: '100%'}}>
-      <h1>Connect</h1>
+      <h1 style={{fontSize: '8vw'}}>Connect</h1>
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%'}}>
-        <h2>Input board code</h2>
-        <input type='text' id='code' maxLength="4" style={{border: 'none', width: '30vh', height: '7vh', borderRadius: '2vh', backgroundColor: '#212529', fontSize: '3vh'}}></input>
-        <button onClick={async () => {swapScreens(await connectBoard()); prop.update()}} style={{width: '12vh', height: '4vh', marginTop: '2vh', border: 'none', borderRadius: '1.5vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold'}}>Connect</button>
+        <h2 style={{fontSize: '6vw'}} >Input board code</h2>
+        <div style={{width: '72vw', height: '14vw', backgroundColor: '#212529', borderRadius: '2vh', display: 'flex', alignItems: 'center'}}>
+          <input type='text' id='code' onKeyDown={(e) => {if(e.key === 'Enter') codeConfirm.current.click()}} maxLength="4" style={{border: 'none', width: '60vw', height: '14vw', borderRadius: '2vh', backgroundColor: '#212529', fontSize: '3vh'}}></input>
+          <button id="codeConfirm" ref={codeConfirm} onClick={async () => {swapScreens(await connectBoard()); prop.update()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '1.5vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '4vw', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><IoSend size={'75%'}/></button>
+        </div>
       </div>
     </div>
   );
@@ -253,6 +264,9 @@ export default function mainPage(){
 
   if(window.localStorage.getItem('board'))
     connected = true;
+
+  if('virtualKeyboard' in navigator)
+    navigator.virtualKeyboard.overlaysConent = true;
 
   if(/android|iphone|kindle|ipad/i.test(navigator.userAgent)){
     tiles = [];

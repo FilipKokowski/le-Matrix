@@ -26,7 +26,7 @@ body{
   overflow: hidden;
   user-select: none;
   background-image: url('./res/homeBackground.png');
-  background-size: 56vh;
+  background-size: 100%;
 }
 
 .mainTopPanel{
