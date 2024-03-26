@@ -18,6 +18,11 @@
   transition: height .5s ease;
 }
 
+.boardAssemblerOn{
+  height: 75vh;
+  transition: height .5s ease;
+}
+
 html{
   color: #cfc1c1;
 }
@@ -68,4 +73,27 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type="color"] {
+  padding: 0;
+  margin-top: 2vw;
+  width: 90vw;
+  height: 10vw;
+  border: none;
+  border-radius: 4vw;
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  border: none;
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4vw;
 }

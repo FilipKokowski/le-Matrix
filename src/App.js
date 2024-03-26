@@ -10,6 +10,8 @@ import { createClient } from "@supabase/supabase-js";
 import {useState, React, useRef} from 'react';
 import './App.css';
 
+import { getCode, getPowerState, clearDB } from "./dbFunctions";
+
 const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
 
 let tiles = [];
@@ -30,7 +32,7 @@ function Tile({size, text, editable}){
   }
 
   return(
-    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
+    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, minWidth: size, minHeight: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
   );
 }
 
@@ -54,30 +56,29 @@ function ColorPicker(){
 
 function PowerButton(){
 
-  const [currentMode, setMode] = useState(localStorage.getItem('power'));
+  const [currentMode, setMode] = useState(getPowerState(window.localStorage.getItem('board')));
 
   const changeColor = () => { 
     setMode(!currentMode); 
 
-    console.log(currentMode)
-    window.localStorage.setItem('power', currentMode);
+    //console.log(currentMode)
 }
   
   return <div onClick={ async () => {changeColor(); await supabase.from('system').update({powerOn: currentMode}).eq('code', window.localStorage.getItem('board'))}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
-function Board({id, inner}){
-  if(id)
+function Board(prop){
+  if(prop.id)
     return (
-      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
+      <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
         {/* Thumbnail of the board*/}
-        {inner}
+        {prop.inner}
       </div>
     )
   else
     return (
-      <div style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
+      <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
         <FaPlus size={'10vh'} color="#494e52"/>
       </div>
     )
@@ -137,17 +138,49 @@ function Boards(){
     set(!val);
   };
 
-  if(connected)
+  const [boardAss, setBoardAss] = useState(false);
+  const toggleBoardAss = () => {
+    console.log('dawd');
+    setBoardAss(!boardAss);
+  };
+
+  console.log('refresh');
+
+  if(connected && !boardAss)
     return (
       <div>
         <h1>Your boards</h1>
         <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
-          <Board/>
-          <Board/>
+          <Board onClick={() => {toggleBoardAss(); swapClasses('boardAssemblerOn')}}/>
+          <Board onClick={() => {toggleBoardAss(); swapClasses('boardAssemblerOn')}}/>
         </div>
       </div>
     );
+  else if(connected && boardAss) return <BoardAssembler/>
   else return <NoConnection screen='boards' update={update}/>
+}
+
+function BoardAssembler(){
+  tiles = [];
+  let tileNum = 225;
+  let tileSize = window.innerWidth * .9 / 15;
+
+
+  for(let row = 0; row < Math.sqrt(tileNum); row++){
+    for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
+      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
+    }
+  }
+
+  return (
+    <div>
+      <h1>Create new board</h1>
+      <div style={{width: '90vw', height: '90vw', maxWidth: '', margin: 'auto'}}>
+        {tiles}
+      </div>
+      <input type="color"></input>
+    </div>
+  );
 }
 
 function Settings(){
@@ -167,19 +200,13 @@ function Settings(){
             <button style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
           </div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <button style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}><MdDeleteSweep size={'50%'} color="#f0a49c"/></button>
+            <button onClick={() => {clearDB(window.localStorage.getItem('board'))}}style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}><MdDeleteSweep size={'50%'} color="#f0a49c"/></button>
             <button onClick={() => {window.localStorage.removeItem('board'); connected = false; update()}} style={{width: '26vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><IoLogInOutline size={'50%'} color="#fcd4b6"/></button>
           </div>
         </div>
       </div>
     );
   else return <NoConnection screen='settings' update={update}/>
-}
-
-async function connectBoard(){
-  const { data } = await supabase.from('boards').select().eq('code', document.getElementById('code').value);
-
-  return data;
 }
 
 function NoConnection(prop){
@@ -215,7 +242,7 @@ function NoConnection(prop){
         <h2 style={{fontSize: '6vw'}} >Input board code</h2>
         <div style={{width: '73vw', height: '14vw', backgroundColor: '#212529', borderRadius: '2vh', display: 'flex', alignItems: 'center'}}>
           <input type='text' id='code' onKeyDown={(e) => {if(e.key === 'Enter') codeConfirm.current.click()}} maxLength="4" style={{border: 'none', width: '60vw', height: '14vw', borderRadius: '2vh', backgroundColor: 'transparent', fontSize: '3vh'}}></input>
-          <button id="codeConfirm" ref={codeConfirm} onClick={async () => {swapScreens(await connectBoard()); prop.update()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '1.5vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '4vw', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><IoSend size={'75%'}/></button>
+          <button id="codeConfirm" ref={codeConfirm} onClick={async () => {swapScreens(await getCode()); prop.update()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '1.5vh', backgroundColor: '#2f3236', color: '#c9bfb5', fontWeight: 'bold', fontSize: '4vw', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><IoSend size={'75%'}/></button>
         </div>
       </div>
     </div>
@@ -231,13 +258,11 @@ function swapClasses(firstClass){
 //Manages bottom panel
 function BottomPanelContent({screen}){
   if(screen === "home")
-    return (<Home/>);
+    return (<BoardAssembler/>);
   else if(screen === "boards")
     return (<Boards/>);
   else if(screen === "settings")
     return (<Settings/>);
-  else
-    return <h1>No bitches</h1>
 }
 
 function BottomPanel(){
