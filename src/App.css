@@ -81,18 +81,24 @@ input[type="color"] {
   height: 10vw;
   border: none;
   border-radius: 3vw;
+  outline: none;
 }
 
 input[type="color"]::-moz-color-swatch {
   border: none;
+  outline: none;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
   border: none;
   padding: 0;
+  outline: none;
+
 }
 
 input[type="color"]::-webkit-color-swatch {
   border: none;
   border-radius: 3vw;
+  outline: none;
+
 }

@@ -7,68 +7,66 @@ import { IoLogInOutline, IoSend} from "react-icons/io5";
 
 import { createClient } from "@supabase/supabase-js";
 
-import {useState, React, useRef} from 'react';
+import {useState, React, useRef, useEffect} from 'react';
 import './App.css';
 
-import { getCode, getPowerState, clearDB } from "./dbFunctions";
+import { getCode, getPowerState, clearDB, setPowerState } from "./dbFunctions";
 
 const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
 
 let tiles = [];
 let tilesColors = {};
 
-let color = 'rgb(255,0,0)';
+let color = '#f6b73c';
 
 let connected = false;
 let togglePower = false;
 
+function TileHandler(prop){
+  const [val, set] = useState(false);
+
+  const update = () => {
+    set(!val);
+  };
+  
+  return <div onClick={() => {if(prop.mode === 'clear') {color = 'black'; update();} else if(prop.mode === 'bucket') update(); else if(prop.mode === 'eraser') color = 'black';}}>{prop.tiles}</div>;
+}
+
 //Tile representing one pixel on the board
 function Tile({size, text, editable}){
 
-  const [currentColor, setBgColor] = useState('rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')');
+  const [currentColor, setBgColor] = useState(() => {let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;});
   const changeColor = () => {
     setBgColor(color);
     tilesColors[text - 1] = color;
   }
 
   return(
-    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, minWidth: size, minHeight: size, backgroundColor: currentColor, float: 'left'}}>{text}</div>
-  );
-}
-
-function ColorPicker(){
-  const [currentColor, setBgColor] = useState(color);
-  const changeColor = () => {
-    setBgColor('rgb(' + document.getElementById('red').value + ', ' + document.getElementById('green').value + ', ' + document.getElementById('blue').value + ')');
-  }
-
-  color = currentColor;
-  
-  return(
-    <div>
-      <input onChange={changeColor} type='range' min='0' max='255'  id='red' style={{accentColor: 'red'}}></input><br/>
-      <input onChange={changeColor} type='range' min='0' max='255' id='green' style={{accentColor: 'green'}}></input><br/>
-      <input onChange={changeColor} type='range' min='0' max='255'  id='blue' style={{accentColor: 'blue'}}></input>
-      <div style={{width: '10vw', height: '10vw', backgroundColor: currentColor}}></div>
-    </div>
+    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, minWidth: size, minHeight: size, backgroundColor: currentColor, float: 'left'}}></div>
   );
 }
 
 function PowerButton(){
+  const [currentMode, setMode] = useState(null);
 
-  const [currentMode, setMode] = useState(getPowerState(window.localStorage.getItem('board')));
-
+  //Get power state from the database and assign it to currentMode
+  useEffect(() => {
+    (async () => {
+        const powerState = await getPowerState(window.localStorage.getItem('board'));
+        setMode(powerState);
+    }) ();
+  }, []);
+  
   const changeColor = () => { 
     setMode(!currentMode); 
-
-    //console.log(currentMode)
-}
+  }
   
-  return <div onClick={ async () => {changeColor(); await supabase.from('system').update({powerOn: currentMode}).eq('code', window.localStorage.getItem('board'))}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
+  return <div onClick={ async () => {changeColor(); setPowerState(window.localStorage.getItem('board'), !(await getPowerState(window.localStorage.getItem('board'))))}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
 }
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 function Board(prop){
+
   if(prop.id)
     return (
       <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
@@ -132,7 +130,7 @@ function Home(){
 
 }
 
-function Boards(prop){
+function Boards(){
   const [val, set] = useState(false);
   const update = () => {
     set(!val);
@@ -140,11 +138,8 @@ function Boards(prop){
 
   const [boardAss, setBoardAss] = useState(false);
   const toggleBoardAss = () => {
-    console.log('dawd');
     setBoardAss(!boardAss);
   };
-
-  console.log('refresh');
 
   if(connected && !boardAss)
     return (
@@ -161,6 +156,30 @@ function Boards(prop){
 }
 
 function BoardAssembler(){
+
+  const [bucket, setBucket] = useState(false);
+
+  const toggleBucket = () => {
+    setBucket(!bucket);
+  };
+
+  const [eraser, setEraser] = useState(false);
+
+  const toggleEraser = () => {
+    setEraser(!eraser);
+  };
+
+  const [currentColor, setBgColor] = useState(color);
+  const changeColor = () => {
+    setBgColor(document.getElementById('colorPicker').value);
+  }
+
+  async function exportBoard(){
+    await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(tilesColors)})
+  }
+
+  color = currentColor;
+
   tiles = [];
   let tileNum = 225;
   let tileSize = window.innerWidth * .9 / 15;
@@ -168,20 +187,25 @@ function BoardAssembler(){
 
   for(let row = 0; row < Math.sqrt(tileNum); row++){
     for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
+      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
     }
   }
-
+  
   return (
     <div>
       <h1>Create new board</h1>
-      <div style={{width: '90vw', height: '90vw', maxWidth: '', margin: 'auto'}}>
-        {tiles}
-      </div>
-      <div style={{height: '10vw', width: '100wv', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-        <input type="color"></input>
-        <button style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: '#303336'}}><FaBucket size={'75%'} color="#cfc1c1"/></button>
-        <button style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: '#303336'}}><FaEraser size={'75%'} color="#cfc1c1"/></button>
+      <div style={{height: '100%', overflowY: 'scroll', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{width: '90vw', height: '90vw', margin: 'auto'}}>
+        <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
+        </div>
+        <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
+          <input type="color" defaultValue="#f6b73c" id="colorPicker" onChange={() => {changeColor()}}></input>
+          <button onClick={() => {toggleBucket()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (bucket) ? '#cfc1c1' : '#303336'}}><FaBucket size={'75%'} color={(bucket) ? '#303336': '#cfc1c1'}/></button>
+          <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '5vw'}}>
+          <button onClick={() => {exportBoard()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold'}}>Save</button>
+        </div>
       </div>
     </div>
   );
@@ -222,7 +246,6 @@ function NoConnection(prop){
     if(con.length != 0){
       connected = (con[0]) ? true : false;
     
-      console.log(con[0]['code']);
       window.localStorage.setItem('board', con[0]['code']);
       window.localStorage.getItem('board');
     }

@@ -14,6 +14,13 @@ export async function getPowerState(code){
     return data[0]['powerOn'];
 }
 
+export async function setPowerState(code, state){
+
+    console.log(code + "   " + state);
+
+    await supabase.from('system').update({powerOn: state}).eq('code', code);   
+}
+
 export async function clearDB(code){
     await supabase.from('boards').delete().eq('code', code);
 }
