@@ -69,24 +69,18 @@ function PowerButton(){
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 function Board(prop){
   const [board, setBoard] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBoards = async () => {
-      const result = await getDBBoards(window.localStorage.getItem('board'));
-      setBoard(result[result.length - 1]);
-      setIsLoading(false);
+      if(prop.id){
+        const result = await getDBBoards(window.localStorage.getItem('board'));
+        setBoard(result[result.length - 1]);
+      }
     };
 
     fetchBoards();
   }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   
-  console.log(board);
-
   if(prop.id)
     return (
       <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
