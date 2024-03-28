@@ -10,7 +10,7 @@ import { createClient } from "@supabase/supabase-js";
 import {useState, React, useRef, useEffect} from 'react';
 import './App.css';
 
-import { getCode, getPowerState, clearDB, setPowerState } from "./dbFunctions";
+import { getCode, getPowerState, clearDB, setPowerState, getDBBoards } from "./dbFunctions";
 
 const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
 
@@ -33,9 +33,11 @@ function TileHandler(prop){
 }
 
 //Tile representing one pixel on the board
-function Tile({size, text, editable}){
+export function Tile({size, text, editable, c}){
 
-  const [currentColor, setBgColor] = useState(() => {let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;});
+  //let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;
+
+  const [currentColor, setBgColor] = useState(() => {tilesColors[text - 1] = c; return c;});
   const changeColor = () => {
     setBgColor(color);
     tilesColors[text - 1] = color;
@@ -66,12 +68,30 @@ function PowerButton(){
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 function Board(prop){
+  const [board, setBoard] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBoards = async () => {
+      const result = await getDBBoards(window.localStorage.getItem('board'));
+      setBoard(result[result.length - 1]);
+      setIsLoading(false);
+    };
+
+    fetchBoards();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  console.log(board);
 
   if(prop.id)
     return (
       <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
         {/* Thumbnail of the board*/}
-        {prop.inner}
+        {board}
       </div>
     )
   else
@@ -80,6 +100,7 @@ function Board(prop){
         <FaPlus size={'10vh'} color="#494e52"/>
       </div>
     )
+  
 }
 
 //Navbar destinations
@@ -96,7 +117,6 @@ function Home(){
     let tileNum = 225;
     let tileSize = boardThumbnailSize / 15;
 
-
     for(let row = 0; row < Math.sqrt(tileNum); row++){
       for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
         tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
@@ -107,7 +127,7 @@ function Home(){
       <div>
         <h1>Home</h1>
         <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
-          <Board id='2' inner={tiles}/>
+          <Board id='2'/>
           <h2 style={{marginTop: '0'}}>Random colors</h2>
           <h3>Set since 11.09.2001</h3>
           <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
@@ -151,11 +171,11 @@ function Boards(){
         </div>
       </div>
     );
-  else if(connected && boardAss) return <BoardAssembler/>
-  else return <NoConnection screen='boards' update={update}/>
+  else if(connected && boardAss) return <BoardAssembler update={toggleBoardAss}/>
+  else return <NoConnection screen='boards' update={update} parent={'boards'}/>
 }
 
-function BoardAssembler(){
+function BoardAssembler(prop){
 
   const [bucket, setBucket] = useState(false);
 
@@ -187,7 +207,7 @@ function BoardAssembler(){
 
   for(let row = 0; row < Math.sqrt(tileNum); row++){
     for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
+      tiles.push(<Tile c="black" key={1 + row * Math.sqrt(tileNum) + tile} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
     }
   }
   
@@ -196,15 +216,15 @@ function BoardAssembler(){
       <h1>Create new board</h1>
       <div style={{height: '100%', overflowY: 'scroll', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center'}}>
         <div style={{width: '90vw', height: '90vw', margin: 'auto'}}>
-        <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
+          <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
         </div>
         <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
           <input type="color" defaultValue="#f6b73c" id="colorPicker" onChange={() => {changeColor()}}></input>
           <button onClick={() => {toggleBucket()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (bucket) ? '#cfc1c1' : '#303336'}}><FaBucket size={'75%'} color={(bucket) ? '#303336': '#cfc1c1'}/></button>
           <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
         </div>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '5vw'}}>
-          <button onClick={() => {exportBoard()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold'}}>Save</button>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
+          <button onClick={() => {exportBoard(); swapClasses('boardsOn'); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold'}}>Save</button>
         </div>
       </div>
     </div>
