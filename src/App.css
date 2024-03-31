@@ -23,6 +23,11 @@
   transition: height .5s ease;
 }
 
+.nightModeOn{
+  height: 35vh;
+  transition: height .5s ease;
+}
+
 html{
   color: #cfc1c1;
 }
@@ -101,4 +106,31 @@ input[type="color"]::-webkit-color-swatch {
   border-radius: 3vw;
   outline: none;
 
+}
+
+input[type="time"] {
+  padding: 0;
+  width: 40vw;
+  height: 15vw;
+  border: none;
+  border-radius: 3vw;
+  outline: none;
+  text-align: center;
+  background: #212529;
+  color: #cfc1c1;
+  font-size: 5vw;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: block;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: transparent;
+}
+
+input[type=time]::-webkit-datetime-edit-text {
+  padding: 19px 4px;
 }

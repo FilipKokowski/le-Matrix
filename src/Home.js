@@ -61,8 +61,8 @@ export function Home(){
         return (
         <div>
             <h1>Home</h1>
-            <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
-                <Board id='2'/>
+            <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
+                <Board id='current'/>
                 <h2 style={{marginTop: '0'}}>Random colors</h2>
                 <h3>Set since 11.09.2001</h3>
                 <button onClick={() => { toggleBoardAss(); swapClasses('boardAssemblerOn');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
@@ -70,11 +70,11 @@ export function Home(){
             <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
                 <div>
                     <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
-                    <FaInstagram size='75%' color='white'/>
+                        <FaInstagram size='75%' color='white'/>
                     </div>
                     <PowerButton/>
                 </div>
-                <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '2vh'}}>
+                <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '4vw'}}>
                     <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
                 </div>   
             </div>

@@ -38,7 +38,6 @@ export async function getDBBoards(code, editable){
         let board = [];
         Object.entries(JSON.parse(element['board'])).forEach((entry) => {
             const [key, value] = entry;
-            //console.log(`${(isNaN(key)) ? 255 : key}: ${value}`);
             if(!isNaN(key))
                 board.push(<Tile key={key} text={key} c={value} editable={editable} size={window.innerHeight / 100}/>)
         });
@@ -47,4 +46,13 @@ export async function getDBBoards(code, editable){
 
     return boards;
 
+}
+
+export async function setSelected(code, id){
+    await supabase.from('system').update({selected: id}).eq('code', code);
+}
+
+export async function getSelected(code){
+    const {data} = await supabase.from('system').select().eq('code', code);
+    return data[0];
 }
