@@ -45,6 +45,17 @@ export function Settings(){
 }
 
 function NightMode(){
+  const [turnOff, setTurnOff] = useState(true);
+  const toggleTurnOff = () => {
+    setTurnOff(!turnOff);
+  };
+
+  const [dimmBy, setDimmBy] = useState(false);
+  const toggleDimmBy = () => {
+    setDimmBy(!dimmBy);
+  };
+
+
   return (
     <div>
       <h1>Night Mode</h1>
@@ -52,8 +63,10 @@ function NightMode(){
         <input type="time"></input>
         <input type="time"></input>
       </div>
-      <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-        <button style={{marginTop: '4vw', width: '30vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1'}}>dwadadawdad</button>
+      <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
+        <button style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1'}}>Set</button>
+        <button onClick={() => {if(!turnOff){toggleTurnOff(); toggleDimmBy()}}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (turnOff) ? '#cfc1c1' : '#303336', color: (turnOff) ? '#303336': '#cfc1c1'}}>Turn off</button>
+        <button onClick={() => {if(!dimmBy){toggleDimmBy(); toggleTurnOff()}}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (dimmBy) ? '#cfc1c1' : '#303336', color: (dimmBy) ? '#303336': '#cfc1c1'}}>Dimm to <input type="text" maxLength={3} style={{width: '6vw', border: 'none', backgroundColor: (dimmBy) ? '#303336': '#cfc1c1'}}></input> %</button>
       </div>
     </div>
   )

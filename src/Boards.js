@@ -24,7 +24,7 @@ export function Board(prop){
 
                     Object.entries(JSON.parse(current.selected)).forEach((entry) => {
                         const [key, value] = entry;
-                        if(!isNaN(key))
+                        if(key >= 0 && key < 255)
                             currentBoard.push(<Tile size={window.innerHeight / 100} text={key} key={key} c={value}/>)
                     });
 
