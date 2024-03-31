@@ -1,18 +1,19 @@
-import { FaHome, FaInstagram, FaMoon} from "react-icons/fa";
+//Icons
+import { FaHome} from "react-icons/fa";
 import { PiSquaresFourFill } from "react-icons/pi";
 import { IoIosSettings } from "react-icons/io";
-import { FaPlus, FaPowerOff, FaBucket, FaEraser } from "react-icons/fa6";
-import { MdDeleteSweep } from "react-icons/md";
-import { IoLogInOutline, IoSend} from "react-icons/io5";
+import {  IoSend} from "react-icons/io5";
 
-import { createClient } from "@supabase/supabase-js";
-
-import {useState, React, useRef, useEffect} from 'react';
 import './App.css';
 
-import { getCode, getPowerState, clearDB, setPowerState, getDBBoards } from "./dbFunctions";
+//Functions
+import {useState, React, useRef} from 'react';
+import { getCode } from "./dbFunctions";
 
-const supabase = createClient("https://xujfzrydvpziizkztbjp.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1amZ6cnlkdnB6aWl6a3p0YmpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQwNTUsImV4cCI6MjAyNjcyMDA1NX0.ikspwER5xHsaSPIkO67P-XOzCPNjIaLMDa7o5dCa608");
+//Components
+import { Settings } from "./Settings";
+import { Boards } from "./Boards";
+import { Home } from "./Home";
 
 let tiles = [];
 let tilesColors = {};
@@ -20,9 +21,20 @@ let tilesColors = {};
 let color = '#f6b73c';
 
 let connected = false;
-let togglePower = false;
 
-function TileHandler(prop){
+export function getConnected() {return connected; }
+export function setConnected(con) {connected = con; }
+
+export function getTiles() {return tiles;}
+export function setTiles(t) {tiles = t;}
+
+export function getTilesColors() {return tilesColors;}
+export function setTilesColors(tc) {tilesColors = tc;}
+
+export function getColor() {return color;}
+export function setColor(c) {color = c;}
+
+export function TileHandler(prop){
   const [val, set] = useState(false);
 
   const update = () => {
@@ -48,210 +60,7 @@ export function Tile({size, text, editable, c}){
   );
 }
 
-function PowerButton(){
-  const [currentMode, setMode] = useState(null);
-
-  //Get power state from the database and assign it to currentMode
-  useEffect(() => {
-    (async () => {
-        const powerState = await getPowerState(window.localStorage.getItem('board'));
-        setMode(powerState);
-    }) ();
-  }, []);
-  
-  const changeColor = () => { 
-    setMode(!currentMode); 
-  }
-  
-  return <div onClick={ async () => {changeColor(); setPowerState(window.localStorage.getItem('board'), !(await getPowerState(window.localStorage.getItem('board'))))}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: (currentMode) ? '#d15c4f' : '#82A67D', borderRadius: '2vh', marginRight: '2.5vh'}}><FaPowerOff size='50%' color={(currentMode) ? '#f0a49c' : '#aac2a7'}/></div>
-}
-
-//Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
-function Board(prop){
-  const [board, setBoard] = useState(null);
-
-  useEffect(() => {
-    const fetchBoards = async () => {
-      if(prop.id){
-        const result = await getDBBoards(window.localStorage.getItem('board'));
-        setBoard(result[result.length - 1]);
-      }
-    };
-
-    fetchBoards();
-  }, []);
-  
-  if(prop.id)
-    return (
-      <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
-        {/* Thumbnail of the board*/}
-        {board}
-      </div>
-    )
-  else
-    return (
-      <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '3vh', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left', margin: '0 2.5vh 0 2.5vh'}}>
-        <FaPlus size={'10vh'} color="#494e52"/>
-      </div>
-    )
-  
-}
-
-//Navbar destinations
-function Home(){
-  const [val, set] = useState(false);
-  const update = () => {
-    set(!val);
-  };
-
-  if(connected){
-    const boardThumbnailSize = window.innerHeight / 100 * 15;
-    
-    tiles = [];
-    let tileNum = 225;
-    let tileSize = boardThumbnailSize / 15;
-
-    for(let row = 0; row < Math.sqrt(tileNum); row++){
-      for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-        tiles.push(<Tile key={1 + row * Math.sqrt(tileNum) + tile} size={tileSize}/>)
-      }
-    }
-
-    return (
-      <div>
-        <h1>Home</h1>
-        <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '2vh'}}>
-          <Board id='2'/>
-          <h2 style={{marginTop: '0'}}>Random colors</h2>
-          <h3>Set since 11.09.2001</h3>
-          <button style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
-        </div>
-        <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
-          <div>
-            <div onClick={() => {window.location.href='https://www.instagram.com/direct/t/104475757669880/';}} style={{width:'14vh', height: '14vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', borderRadius: '2vh', marginRight: '1.5vh', marginBottom: '1.75vh'}}>
-              <FaInstagram size='75%' color='white'/>
-            </div>
-            <PowerButton/>
-          </div>
-          <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '2vh'}}>
-            <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
-          </div>   
-        </div>
-      </div>
-    );
-  }
-  else return <NoConnection screen='home' update={update}/>
-
-}
-
-function Boards(){
-  const [val, set] = useState(false);
-  const update = () => {
-    set(!val);
-  };
-
-  const [boardAss, setBoardAss] = useState(false);
-  const toggleBoardAss = () => {
-    setBoardAss(!boardAss);
-  };
-
-  if(connected && !boardAss)
-    return (
-      <div>
-        <h1>Your boards</h1>
-        <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
-          <Board onClick={() => {toggleBoardAss(); swapClasses('boardAssemblerOn')}}/>
-          <Board onClick={() => {toggleBoardAss(); swapClasses('boardAssemblerOn')}}/>
-        </div>
-      </div>
-    );
-  else if(connected && boardAss) return <BoardAssembler update={toggleBoardAss}/>
-  else return <NoConnection screen='boards' update={update} parent={'boards'}/>
-}
-
-function BoardAssembler(prop){
-
-  const [bucket, setBucket] = useState(false);
-
-  const toggleBucket = () => {
-    setBucket(!bucket);
-  };
-
-  const [eraser, setEraser] = useState(false);
-
-  const toggleEraser = () => {
-    setEraser(!eraser);
-  };
-
-  const [currentColor, setBgColor] = useState(color);
-  const changeColor = () => {
-    setBgColor(document.getElementById('colorPicker').value);
-  }
-
-  async function exportBoard(){
-    await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(tilesColors)})
-  }
-
-  color = currentColor;
-
-  tiles = [];
-  let tileNum = 225;
-  let tileSize = window.innerWidth * .9 / 15;
-
-
-  for(let row = 0; row < Math.sqrt(tileNum); row++){
-    for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-      tiles.push(<Tile c="black" key={1 + row * Math.sqrt(tileNum) + tile} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
-    }
-  }
-  
-  return (
-    <div>
-      <h1>Create new board</h1>
-      <div style={{height: '100%', overflowY: 'scroll', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center'}}>
-        <div style={{width: '90vw', height: '90vw', margin: 'auto'}}>
-          <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
-        </div>
-        <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-          <input type="color" defaultValue="#f6b73c" id="colorPicker" onChange={() => {changeColor()}}></input>
-          <button onClick={() => {toggleBucket()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (bucket) ? '#cfc1c1' : '#303336'}}><FaBucket size={'75%'} color={(bucket) ? '#303336': '#cfc1c1'}/></button>
-          <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
-          <button onClick={() => {exportBoard(); swapClasses('boardsOn'); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold'}}>Save</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Settings(){
-
-  const [val, set] = useState(false);
-  const update = () => {
-    set(!val);
-  };
-
-  if(connected)
-    return(
-      <div>
-        <h1>Settings</h1>
-        <div>
-          <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/face.jpg')}></img></div>
-            <button style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
-          </div>
-          <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <button onClick={() => {clearDB(window.localStorage.getItem('board'))}}style={{width: '14vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e97366', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold', marginRight: '2vh'}}><MdDeleteSweep size={'50%'} color="#f0a49c"/></button>
-            <button onClick={() => {window.localStorage.removeItem('board'); connected = false; update()}} style={{width: '26vh', height: '14vh', border: 'none', borderRadius: '2vh', backgroundColor: '#e99f66', color: '#FFF6E8', fontSize: '2.25vh', fontWeight: 'bold'}}><IoLogInOutline size={'50%'} color="#fcd4b6"/></button>
-          </div>
-        </div>
-      </div>
-    );
-  else return <NoConnection screen='settings' update={update}/>
-}
-
-function NoConnection(prop){
+export function NoConnection(prop){
   const codeConfirm = useRef();
 
   const [connecting, set] = useState(true);
@@ -291,7 +100,7 @@ function NoConnection(prop){
 }
 
 //Toggles transitions between navbar destinations
-function swapClasses(firstClass){
+export function swapClasses(firstClass){
   document.getElementById('mainBottomPanel').className = '';
   document.getElementById('mainBottomPanel').classList.add(firstClass);
 }
@@ -317,7 +126,7 @@ function BottomPanel(){
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
-            <FaHome onClick={() => {swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <FaHome onClick={() => {if(currentScreen != 'home') swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
