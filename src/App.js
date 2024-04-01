@@ -40,7 +40,7 @@ export function TileHandler(prop){
   const update = () => {
     set(!val);
   };
-  
+
   return <div onClick={() => {if(prop.mode === 'clear') {color = 'black'; update();} else if(prop.mode === 'bucket') update(); else if(prop.mode === 'eraser') color = 'black';}}>{prop.tiles}</div>;
 }
 

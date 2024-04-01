@@ -4,7 +4,7 @@ import { AiOutlinePicture } from "react-icons/ai";
 
 //Functions
 import { useState, useEffect, React} from 'react';
-import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors } from './App';
+import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, getTiles } from './App';
 import { getDBBoards, getSelected, setSelected, supabase } from "./dbFunctions";
 
 //Components
@@ -104,6 +104,11 @@ export function Boards(){
 
 export function BoardAssembler(prop){
 
+    const [image, setI] = useState(null);
+    const setImage = (img) => {
+        setI(img);
+    };
+
     const [bucket, setBucket] = useState(false);
 
     const toggleBucket = () => {
@@ -131,11 +136,14 @@ export function BoardAssembler(prop){
     let tileNum = 225;
     let tileSize = window.innerWidth * .9 / 15;
 
-
     for(let row = 0; row < Math.sqrt(tileNum); row++){
         for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
             let color = (prop.board == null) ? 'black' : prop.board[1 + row * Math.sqrt(tileNum) + tile].props.c;
-            tiles.push(<Tile c={color} key={1 + row * Math.sqrt(tileNum) + tile} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
+
+            if(image != null){
+                color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[1 + row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
+            }
+            tiles.push(<Tile c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
 
@@ -158,9 +166,59 @@ export function BoardAssembler(prop){
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
                 <button onClick={() => {exportBoard(); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
                 <button onClick={() => {exportBoard(); setSelected(localStorage.getItem('board'), getTilesColors()); prop.update()}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
-                <button style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><AiOutlinePicture size={'75%'}/></button>
+                <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
+                <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
             </div>
         </div>
         </div>
     );
+}
+
+function loadImage(setImage){
+
+    var file = document.getElementById('uploadImage').files[0];
+    var reader = new FileReader();
+
+    reader.onload = function(event) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        var scaleFactor = 15 / Math.min(img.width, img.height); // Change this to scale the image by a different factor
+        var scaledCanvas = document.createElement('canvas');
+        var scaledCtx = scaledCanvas.getContext('2d');
+        scaledCanvas.width = img.width * scaleFactor;
+        scaledCanvas.height = img.height * scaleFactor;
+        scaledCtx.drawImage(canvas, 0, 0, img.width, img.height, 0, 0, scaledCanvas.width, scaledCanvas.height);
+
+        // Get pixel data from the scaled canvas
+        var imageData = scaledCtx.getImageData(0, 0, scaledCanvas.width, scaledCanvas.height);
+        var pixels = imageData.data;
+
+        let board = []
+
+        // Iterate through pixels
+        for (var i = 0; i < pixels.length; i += 4) {
+          // pixels[i], pixels[i+1], pixels[i+2], pixels[i+3] represent R, G, B, A values respectively
+          var red = pixels[i];
+          var green = pixels[i+1];
+          var blue = pixels[i+2];
+          
+          board.push("rgb(" + red + ", " + green + ", " + blue + ")");
+
+          // Do something with the pixel values
+          //console.log(i / 4 + " Pixel at (" + (i / 4 % scaledCanvas.width) + ", " + Math.floor(i / 4 / scaledCanvas.width) + "): R=" + red + ", G=" + green + ", B=" + blue + ", A=" + alpha);
+        }  
+
+        console.log(board)
+        setImage(board)
+      };
+      img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
 }
