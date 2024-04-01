@@ -56,3 +56,16 @@ export async function getSelected(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     return data[0];
 }
+
+export async function setNightMode(code, from, to, dimmTo = '0'){
+    console.log(dimmTo);
+    if(dimmTo === 0)
+        await supabase.from('system').update({from: from, to: to, mode: 'turnOff', dimmTo: '0'}).eq('code', code);
+    else
+        await supabase.from('system').update({from: from, to: to, mode: 'dimmTo', dimmTo: dimmTo}).eq('code', code);
+}
+
+export async function getNightMode(code){
+    const {data} = await supabase.from('system').select().eq('code', code);
+    return data[0];
+}

@@ -31,7 +31,7 @@ export function PowerButton(){
   
   
 //Navbar destinations
-export function Home(){
+export function Home(prop){
     const [val, set] = useState(false);
     const update = () => {
         set(!val);
@@ -65,7 +65,7 @@ export function Home(){
                 <Board id='current'/>
                 <h2 style={{marginTop: '0'}}>Random colors</h2>
                 <h3>Set since 11.09.2001</h3>
-                <button onClick={() => { toggleBoardAss(); swapClasses('boardAssemblerOn');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
+                <button onClick={() => { prop.swap('boards');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
             </div>
             <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
                 <div>

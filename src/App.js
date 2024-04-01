@@ -106,17 +106,17 @@ export function swapClasses(firstClass){
 }
 
 //Manages bottom panel
-function BottomPanelContent({screen}){
-  if(screen === "home")
-    return (<Home/>);
-  else if(screen === "boards")
+function BottomPanelContent(prop){
+  if(prop.screen === "home")
+    return (<Home swap={prop.swap}/>);
+  else if(prop.screen === "boards")
     return (<Boards/>);
-  else if(screen === "settings")
+  else if(prop.screen === "settings")
     return (<Settings/>);
 }
 
 function BottomPanel(){
-  const [currentScreen, setCurrentScreen] = useState("home"); // Initial screen is "boards"
+  const [currentScreen, setCurrentScreen] = useState("home"); // Initial screen is "home"
 
   const swapScreens = (screen) => {
     setCurrentScreen(screen); // Update currentScreen state based on the clicked icon
@@ -124,11 +124,11 @@ function BottomPanel(){
   
   return (
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
-      <BottomPanelContent screen={currentScreen}/>
+      <BottomPanelContent screen={currentScreen} swap={swapScreens}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
-            <FaHome onClick={() => {if(currentScreen != 'home') swapClasses('homeOn'); swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapClasses('boardsOn'); swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <IoIosSettings onClick= {() => { swapClasses('settingsOn'); swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <FaHome onClick={() => {if(currentScreen != 'home') swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <IoIosSettings onClick= {() => {if(currentScreen != 'settings') swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
     </div>
   );

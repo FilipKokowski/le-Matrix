@@ -5,7 +5,7 @@ import { IoLogInOutline } from "react-icons/io5";
 
 //Functions
 import { useState, React} from 'react';
-import { clearDB } from "./dbFunctions";
+import { clearDB, setNightMode } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
@@ -20,7 +20,7 @@ export function Settings(){
   const [nightMode, setNM] = useState(false);
   const toggleNightMode = () => {
     setNM(!nightMode);
-    swapClasses('nightModeOn');
+    swapClasses((!nightMode) ? 'nightModeOn' : 'settingsOn');
   }
 
   if(getConnected() && !nightMode)
@@ -29,7 +29,7 @@ export function Settings(){
         <h1>Settings</h1>
         <div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/face.jpg')}></img></div>
+            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/dog.png')}></img></div>
             <button onClick={() => {toggleNightMode()}} style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
           </div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
@@ -40,11 +40,11 @@ export function Settings(){
       </div>
     );
   else if(nightMode)
-      return <NightMode/>
+      return <NightMode toggleNightMode={toggleNightMode}/>
   else return <NoConnection screen='settings' update={update}/>
 }
 
-function NightMode(){
+function NightMode(prop){
   const [turnOff, setTurnOff] = useState(true);
   const toggleTurnOff = () => {
     setTurnOff(!turnOff);
@@ -60,13 +60,13 @@ function NightMode(){
     <div>
       <h1>Night Mode</h1>
       <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-        <input type="time"></input>
-        <input type="time"></input>
+        <input id='from' type="time"></input>
+        <input id='to' type="time"></input>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
-        <button style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1'}}>Set</button>
+        <button onClick={() => {if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && !isNaN(parseInt(document.getElementById('dimmTo').value))) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1'}}>Set</button>
         <button onClick={() => {if(!turnOff){toggleTurnOff(); toggleDimmBy()}}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (turnOff) ? '#cfc1c1' : '#303336', color: (turnOff) ? '#303336': '#cfc1c1'}}>Turn off</button>
-        <button onClick={() => {if(!dimmBy){toggleDimmBy(); toggleTurnOff()}}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (dimmBy) ? '#cfc1c1' : '#303336', color: (dimmBy) ? '#303336': '#cfc1c1'}}>Dimm to <input type="text" maxLength={3} style={{width: '6vw', border: 'none', backgroundColor: (dimmBy) ? '#303336': '#cfc1c1'}}></input> %</button>
+        <button onClick={() => {if(!dimmBy){toggleDimmBy(); toggleTurnOff()}}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (dimmBy) ? '#cfc1c1' : '#303336', color: (dimmBy) ? '#303336': '#cfc1c1'}}>Dimm to <input id='dimmTo' type="text" maxLength={3} style={{width: '6vw', border: 'none', backgroundColor: (dimmBy) ? '#303336': '#cfc1c1'}}></input> %</button>
       </div>
     </div>
   )
