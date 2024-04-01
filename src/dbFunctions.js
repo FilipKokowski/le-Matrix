@@ -58,7 +58,6 @@ export async function getSelected(code){
 }
 
 export async function setNightMode(code, from, to, dimmTo = '0'){
-    console.log(dimmTo);
     if(dimmTo === 0)
         await supabase.from('system').update({from: from, to: to, mode: 'turnOff', dimmTo: '0'}).eq('code', code);
     else

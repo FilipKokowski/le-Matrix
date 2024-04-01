@@ -49,10 +49,10 @@ export function Tile({size, text, editable, c}){
 
   //let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;
 
-  const [currentColor, setBgColor] = useState(() => {tilesColors[text] = c; return c;});
+  const [currentColor, setBgColor] = useState(() => {tilesColors[text - 1] = c; return c;});
   const changeColor = () => {
     setBgColor(color);
-    tilesColors[text] = color;
+    tilesColors[text - 1] = color;
   }
 
   return(

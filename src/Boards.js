@@ -130,19 +130,24 @@ export function BoardAssembler(prop){
         await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(getTilesColors())})
     }
 
+    async function updateBoard(code){
+        console.log(getTilesColors())
+        await supabase.from('boards').update({board: JSON.stringify(getTilesColors())}).eq('code', code);
+    }
+
     setColor(currentColor);
 
     let tiles = []
     let tileNum = 225;
     let tileSize = window.innerWidth * .9 / 15;
-
+    
     for(let row = 0; row < Math.sqrt(tileNum); row++){
         for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-            let color = (prop.board == null) ? 'black' : prop.board[1 + row * Math.sqrt(tileNum) + tile].props.c;
+            let color = (prop.board == null) ? 'black' : prop.board[row * Math.sqrt(tileNum) + tile].props.c;
 
-            if(image != null){
-                color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[1 + row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
-            }
+            if(image != null)
+                color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
+            
             tiles.push(<Tile c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
@@ -164,8 +169,8 @@ export function BoardAssembler(prop){
                 <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
             </div>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
-                <button onClick={() => {exportBoard(); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
-                <button onClick={() => {exportBoard(); setSelected(localStorage.getItem('board'), getTilesColors()); prop.update()}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else updateBoard(window.localStorage.getItem('board')); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else updateBoard(window.localStorage.getItem('board')); setSelected(localStorage.getItem('board'), getTilesColors()); prop.update()}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
                 <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
                 <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
             </div>
