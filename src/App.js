@@ -16,7 +16,7 @@ import { Boards } from "./Boards";
 import { Home } from "./Home";
 
 let tiles = [];
-let tilesColors = {};
+let tilesColors = [];
 
 let color = '#f6b73c';
 
