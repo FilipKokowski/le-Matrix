@@ -204,7 +204,7 @@ function loadImage(setImage){
             var scaledCtx = scaledCanvas.getContext('2d');
             scaledCanvas.width = img.width * scaleFactor;
             scaledCanvas.height = img.height * scaleFactor;
-            scaledCtx.drawImage(canvas, 0, 0, img.width, img.height, 0, 0, scaledCanvas.width, scaledCanvas.height);
+            scaledCtx.drawImage(canvas, 0, 0, Math.min(scaledCanvas.width, scaledCanvas.height), Math.min(scaledCanvas.width, scaledCanvas.height));
 
             // Get pixel data from the scaled canvas
             var imageData = scaledCtx.getImageData(0, 0, scaledCanvas.width, scaledCanvas.height);

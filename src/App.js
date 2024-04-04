@@ -140,7 +140,6 @@ function BottomPanel(){
 
 //Main screen
 export default function mainPage(){
-
   if(window.localStorage.getItem('board'))
     connected = true;
 
