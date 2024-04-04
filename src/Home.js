@@ -4,7 +4,7 @@ import { FaInstagram} from "react-icons/fa";
 
 //Functions
 import { useState, useEffect, React} from 'react';
-import { getConnected, setTiles, swapClasses } from './App';
+import { getConnected, setTiles, swapClasses, toggleNotification } from './App';
 import { setPowerState, getPowerState } from "./dbFunctions";
 
 //Components

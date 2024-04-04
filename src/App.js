@@ -105,8 +105,7 @@ export function NoConnection(prop){
 
 //Toggles transitions between navbar destinations
 export function swapClasses(firstClass){
-  document.getElementById('mainBottomPanel').className = '';
-  document.getElementById('mainBottomPanel').classList.add(firstClass);
+  document.getElementById('mainBottomPanel').className = firstClass;
 }
 
 //Manages bottom panel
@@ -117,6 +116,22 @@ function BottomPanelContent(prop){
     return (<Boards/>);
   else if(prop.screen === "settings")
     return (<Settings/>);
+}
+
+export function toggleNotification(text = 'default', color = '#2a2e32', duration = 1500){
+  if(document.getElementById('notification').className === 'notOn')
+    document.getElementById('notification').className = 'notOff';
+  else{
+    document.getElementById('notification').className = 'notOn';
+
+    setTimeout(function() {
+      document.getElementById('notification').className = 'notOff';
+    }, duration);
+
+  }
+  
+  document.getElementById('notification').style.backgroundColor = color;
+  document.getElementById('notification').innerHTML = '<h2>' + text + '</h2>'
 }
 
 function BottomPanel(){
@@ -166,6 +181,7 @@ export default function MainPage(){
           </div>
           <BottomPanel/>
         </div>
+        <div id='notification' className="notOff" style={{position: 'absolute', top: '22.5vw', right: '10vw', display:'flex', justifyContent: 'center', alignItems: 'center', width: '80vw', height: '15vw', backgroundColor: '#2a2e32', borderRadius: '4vw'}}></div>
       </div>
     )
   }

@@ -28,6 +28,18 @@
   transition: height .5s ease;
 }
 
+.notOn{
+  opacity: 1;
+
+  transition: opacity .25s ease;
+}
+
+.notOff{
+  opacity: 0;
+
+  transition: opacity .25s ease;
+}
+
 html{
   color: #cfc1c1;
 }
