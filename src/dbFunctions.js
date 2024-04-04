@@ -39,7 +39,7 @@ export async function getDBBoards(code, editable){
         Object.entries(JSON.parse(element['board'])).forEach((entry) => {
             const [key, value] = entry;
             if(!isNaN(key))
-                board.push(<Tile key={key} text={key} c={value} editable={editable} size={window.innerHeight / 100}/>)
+                board.push(<Tile boardID={element.id} key={key} text={key} c={value} editable={editable} size={window.innerHeight / 100}/>)
         });
         boards.push(board);
     });

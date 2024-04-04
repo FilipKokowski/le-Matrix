@@ -15,12 +15,15 @@ import { Settings } from "./Settings";
 import { Boards } from "./Boards";
 import { Home } from "./Home";
 
+export let id = 0;
 let tiles = [];
 let tilesColors = [];
 
 let color = '#f6b73c';
 
 let connected = false;
+
+export function setID(ID){ id = ID; }
 
 export function getConnected() {return connected; }
 export function setConnected(con) {connected = con; }
@@ -53,6 +56,7 @@ export function Tile({size, text, editable, c}){
   const changeColor = () => {
     setBgColor(color);
     tilesColors[text - 1] = color;
+    console.log(id);
   }
 
   return(

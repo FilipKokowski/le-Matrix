@@ -4,7 +4,7 @@ import { AiOutlinePicture } from "react-icons/ai";
 
 //Functions
 import { useState, useEffect, React} from 'react';
-import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, getTiles } from './App';
+import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, getTiles, id, setID } from './App';
 import { getDBBoards, getSelected, setSelected, supabase } from "./dbFunctions";
 
 //Components
@@ -32,6 +32,7 @@ export function Board(prop){
                 } else {
                     const result = await getDBBoards(window.localStorage.getItem('board'));
                     setBoard(result[prop.id]);
+
                 }
             }
         };
@@ -79,9 +80,9 @@ export function Boards(){
             
             let boardsLocal = []
 
-            for(let board = 0; board < result.length; board++)
-                boardsLocal.push(<Board onClick={() => {toggleBoardAss(); boardTemplate(result[board]); swapClasses('boardAssemblerOn')}} id={board.toString()} key={board}/>);
-        
+            for(let board = 0; board < result.length; board++){
+                boardsLocal.push(<Board onClick={() => {setID(result[board][0].props.boardID); toggleBoardAss(); boardTemplate(result[board]); swapClasses('boardAssemblerOn')}} id={board.toString()} key={board}/>);
+            }
             setBoards(boardsLocal);
         };
 
@@ -130,15 +131,14 @@ export function BoardAssembler(prop){
         await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(getTilesColors().slice(0,255))})
     }
 
-    async function updateBoard(code){
+    async function updateBoard(){
         console.log(getTilesColors().slice(0,255))
         
-        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255))}).eq('code', code);
+        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
 
-    async function updateSelected(code){
-        console.log(getTilesColors())
-        await supabase.from('system').update({selected: JSON.stringify(getTilesColors().slice(0,255))}).eq('code', code);
+    async function updateSelected(){
+        await supabase.from('system').update({selected: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
 
     setColor(currentColor);
@@ -154,7 +154,7 @@ export function BoardAssembler(prop){
             if(image != null)
                 color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
             
-            tiles.push(<Tile c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
+            tiles.push(<Tile boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
 
