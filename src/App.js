@@ -7,7 +7,7 @@ import {  IoSend} from "react-icons/io5";
 import './App.css';
 
 //Functions
-import {useState, React, useRef} from 'react';
+import {useState, React, useRef, useEffect} from 'react';
 import { getCode } from "./dbFunctions";
 
 //Components
@@ -139,7 +139,28 @@ function BottomPanel(){
 }
 
 //Main screen
-export default function mainPage(){
+export default function MainPage(){
+  useEffect(() => {
+    const lockOrientation = () => {
+      // Lock the screen orientation to portrait mode
+      if (window.screen.orientation) {
+        window.screen.orientation.lock('portrait').catch(error => {
+          console.error('Failed to lock screen orientation:', error);
+        });
+      }
+    };
+
+    lockOrientation();
+
+    // Cleanup function
+    return () => {
+      // Unlock the screen orientation if needed
+      if (window.screen.orientation && window.screen.orientation.unlock) {
+        window.screen.orientation.unlock();
+      }
+    };
+  }, []);
+
   if(window.localStorage.getItem('board'))
     connected = true;
 
