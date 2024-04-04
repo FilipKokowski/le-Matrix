@@ -191,46 +191,49 @@ function loadImage(setImage){
         var reader = new FileReader();
 
         reader.onload = function(event) {
-        var img = new Image();
-        img.onload = function() {
-            var canvas = document.createElement('canvas');
-            var ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0, img.width, img.width);
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
 
-            var scaleFactor = 15 / Math.min(img.width, img.height); // Change this to scale the image by a different factor
-            var scaledCanvas = document.createElement('canvas');
-            var scaledCtx = scaledCanvas.getContext('2d');
-            scaledCanvas.width = img.width * scaleFactor;
-            scaledCanvas.height = img.height * scaleFactor;
-            scaledCtx.drawImage(canvas, 0, 0, Math.min(scaledCanvas.width, scaledCanvas.height), Math.min(scaledCanvas.width, scaledCanvas.height));
+                // Determine the size of the square crop
+                var size = Math.min(img.width, img.height);
 
-            // Get pixel data from the scaled canvas
-            var imageData = scaledCtx.getImageData(0, 0, scaledCanvas.width, scaledCanvas.height);
-            var pixels = imageData.data;
+                // Set the canvas dimensions to be square and scaled
+                canvas.width = 15;
+                canvas.height = 15;
 
-            let board = []
+                // Calculate the position for cropping
+                var x = (img.width - size) / 2;
+                var y = (img.height - size) / 2;
 
-            // Iterate through pixels
-            for (var i = 0; i < pixels.length; i += 4) {
-            // pixels[i], pixels[i+1], pixels[i+2], pixels[i+3] represent R, G, B, A values respectively
-            var red = pixels[i];
-            var green = pixels[i+1];
-            var blue = pixels[i+2];
-            
-            board.push("rgb(" + red + ", " + green + ", " + blue + ")");
+                // Draw the square cropped image onto the canvas
+                ctx.drawImage(img, x, y, size, size, 0, 0, 15, 15);
 
-            // Do something with the pixel values
-            //console.log(i / 4 + " Pixel at (" + (i / 4 % scaledCanvas.width) + ", " + Math.floor(i / 4 / scaledCanvas.width) + "): R=" + red + ", G=" + green + ", B=" + blue + ", A=" + alpha);
-            }  
+                // Get pixel data from the cropped canvas
+                var imageData = ctx.getImageData(0, 0, 15, 15);
+                var pixels = imageData.data;
 
-            console.log(board)
-            setImage(board)
-        };
-        img.src = event.target.result;
+                let board = [];
+
+                // Iterate through pixels
+                for (var i = 0; i < pixels.length; i += 4) {
+                    // Extract RGB values
+                    var red = pixels[i];
+                    var green = pixels[i + 1];
+                    var blue = pixels[i + 2];
+
+                    // Store pixel color as an RGB string
+                    board.push("rgb(" + red + ", " + green + ", " + blue + ")");
+                }
+
+                console.log(board);
+                setImage(board);
+            };
+            img.src = event.target.result;
         };
 
         reader.readAsDataURL(file);
     }
 }
+
