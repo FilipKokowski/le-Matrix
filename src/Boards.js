@@ -259,7 +259,8 @@ function loadImage(setImage){
                     var blue = pixels[i + 2];
 
                     // Store pixel color as an RGB string
-                    board.push("rgb(" + red + ", " + green + ", " + blue + ")");
+                    board.push("#" + toHex(red) + toHex(green) + toHex(blue));
+                    console.log(board[board.length - 1]);
                 }
 
                 console.log(board);
@@ -272,3 +273,6 @@ function loadImage(setImage){
     }
 }
 
+function toHex(d) {
+    return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+}
