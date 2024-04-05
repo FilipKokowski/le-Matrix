@@ -1,6 +1,8 @@
 //Icons
-import { FaPlus, FaBucket, FaEraser } from "react-icons/fa6";
+import { FaPlus, FaEraser } from "react-icons/fa6";
 import { AiOutlinePicture } from "react-icons/ai";
+import { CgColorPicker } from "react-icons/cg";
+
 
 //Functions
 import { useState, useEffect, React} from 'react';
@@ -9,6 +11,10 @@ import { getDBBoards, getSelected, setSelected, supabase } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile, TileHandler } from './App';
+
+export let mode = null;
+
+export let colorPickerColor = null;
 
 //Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
 export function Board(prop){
@@ -103,15 +109,38 @@ export function Boards(){
     else return <NoConnection screen='boards' update={update} parent={'boards'}/>
 }
 
-function ColorPicker(prop){
+function ToolBar(prop){
     const [currentColor, setBgColor] = useState(getColor());
     const changeColor = () => {
         setBgColor(document.getElementById('colorPicker').value);
     }
 
+    const [colorPicker, setColorPicker] = useState(false);
+    const toggleColorPicker = () => {
+        setColorPicker(!colorPicker);
+        mode = (!colorPicker) ? 'colorPicker' : null;
+        console.log(mode)
+    };
+
+    const [eraser, setEraser] = useState(false);
+    const toggleEraser = () => {
+        setEraser(!eraser);
+        mode = (!eraser) ? 'eraser' : null;
+        console.log(mode)
+    };
+
     setColor(currentColor);
 
-    return <input type="color" defaultValue={getColor()} id="colorPicker" onChange={() => {changeColor(prop.tiles)}}></input>;
+    console.log(prop.color)
+
+    return (
+        <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
+            <input type="color" value={(prop.color) ? prop.color : prop.tiles[0].props.c} id="colorPicker" onChange={() => {changeColor()}}></input>
+            <button onClick={() => {toggleColorPicker()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (colorPicker) ? '#cfc1c1' : '#303336'}}><CgColorPicker size={'75%'} color={(colorPicker) ? '#303336': '#cfc1c1'}/></button>
+            <button onClick={() => {toggleEraser()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
+        </div>
+    );
+
 }
 
 export function BoardAssembler(prop){
@@ -121,16 +150,9 @@ export function BoardAssembler(prop){
         setI(img);
     };
 
-    const [bucket, setBucket] = useState(false);
-
-    const toggleBucket = () => {
-        setBucket(!bucket);
-    };
-
-    const [eraser, setEraser] = useState(false);
-
-    const toggleEraser = () => {
-        setEraser(!eraser);
+    const [tileColor, setTileColor] = useState(null);
+    const setColorPicker = (c) => {
+        setTileColor(c);
     };
 
     async function exportBoard(){
@@ -159,7 +181,7 @@ export function BoardAssembler(prop){
             if(image != null)
                 color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
             
-            tiles.push(<Tile boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
+            tiles.push(<Tile setColorPicker={setColorPicker} boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
 
@@ -172,13 +194,9 @@ export function BoardAssembler(prop){
         {title}
         <div style={{height: '100%', overflowY: 'scroll', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center'}}>
             <div style={{width: '90vw', height: '90vw', margin: 'auto'}}>
-                <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
+                <TileHandler tiles={tiles}/>
             </div>
-            <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-                <ColorPicker tiles={tiles}/>
-                <button onClick={() => {toggleBucket()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (bucket) ? '#cfc1c1' : '#303336'}}><FaBucket size={'75%'} color={(bucket) ? '#303336': '#cfc1c1'}/></button>
-                <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
-            </div>
+            <ToolBar color={tileColor} tiles={tiles}/>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else updateBoard(window.localStorage.getItem('board')); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update()}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>

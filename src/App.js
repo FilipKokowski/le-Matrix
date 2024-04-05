@@ -12,7 +12,7 @@ import { getCode } from "./dbFunctions";
 
 //Components
 import { Settings } from "./Settings";
-import { Boards } from "./Boards";
+import { Boards, colorPickerColor, mode } from "./Boards";
 import { Home } from "./Home";
 
 export let id = 0;
@@ -44,23 +44,28 @@ export function TileHandler(prop){
     set(!val);
   };
 
-  return <div onClick={() => {if(prop.mode === 'clear') {color = 'black'; update();} else if(prop.mode === 'bucket') update(); else if(prop.mode === 'eraser') color = 'black';}}>{prop.tiles}</div>;
+  return <div onClick={() => {if(mode === 'clear') {color = 'black'; update();} else if(mode === 'bucket') update(); else if(mode === 'eraser') color = 'black';}}>{prop.tiles}</div>;
 }
 
 //Tile representing one pixel on the board
-export function Tile({size, text, editable, c}){
+export function Tile(prop){
 
   //let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;
 
-  const [currentColor, setBgColor] = useState(() => {tilesColors[text - 1] = c; return c;});
+  const [currentColor, setBgColor] = useState(() => {tilesColors[prop.text - 1] = prop.c; return prop.c;});
   const changeColor = () => {
-    setBgColor(color);
-    tilesColors[text - 1] = color;
-    console.log(id);
+    if(mode !== 'colorPicker'){
+      setBgColor(color);
+      tilesColors[prop.text - 1] = color;
+      console.log(prop.id);
+    }
+    else
+      prop.setColorPicker(currentColor);
+    
   }
 
   return(
-    <div onClick={(editable) ? changeColor : () => {}} style={{width: size, height: size, minWidth: size, minHeight: size, backgroundColor: currentColor, float: 'left'}}></div>
+    <div onClick={(prop.editable) ? changeColor : () => {}} style={{width: prop.size, height: prop.size, minWidth: prop.size, minHeight: prop.size, backgroundColor: currentColor, float: 'left'}}></div>
   );
 }
 
