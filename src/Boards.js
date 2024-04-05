@@ -103,6 +103,17 @@ export function Boards(){
     else return <NoConnection screen='boards' update={update} parent={'boards'}/>
 }
 
+function ColorPicker(prop){
+    const [currentColor, setBgColor] = useState(getColor());
+    const changeColor = () => {
+        setBgColor(document.getElementById('colorPicker').value);
+    }
+
+    setColor(currentColor);
+
+    return <input type="color" defaultValue={getColor()} id="colorPicker" onChange={() => {changeColor(prop.tiles)}}></input>;
+}
+
 export function BoardAssembler(prop){
 
     const [image, setI] = useState(null);
@@ -122,11 +133,6 @@ export function BoardAssembler(prop){
         setEraser(!eraser);
     };
 
-    const [currentColor, setBgColor] = useState(getColor());
-    const changeColor = () => {
-        setBgColor(document.getElementById('colorPicker').value);
-    }
-
     async function exportBoard(){
         await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(getTilesColors().slice(0,255))})
     }
@@ -141,7 +147,6 @@ export function BoardAssembler(prop){
         await supabase.from('system').update({selected: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
 
-    setColor(currentColor);
 
     let tiles = []
     let tileNum = 225;
@@ -170,7 +175,7 @@ export function BoardAssembler(prop){
                 <TileHandler tiles={tiles} mode={(bucket && eraser) ? 'clear' : (bucket) ? 'bucket' : (eraser) ? 'eraser' : 'normal'}/>
             </div>
             <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-                <input type="color" defaultValue={getColor()} id="colorPicker" onChange={() => {changeColor()}}></input>
+                <ColorPicker tiles={tiles}/>
                 <button onClick={() => {toggleBucket()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (bucket) ? '#cfc1c1' : '#303336'}}><FaBucket size={'75%'} color={(bucket) ? '#303336': '#cfc1c1'}/></button>
                 <button onClick={() => {toggleEraser()}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
             </div>
