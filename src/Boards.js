@@ -115,7 +115,7 @@ function ToolBar(prop){
         setBgColor(document.getElementById('colorPicker').value);
     }
 
-    const [colorPicker, setColorPicker] = useState(false);
+    const [colorPicker, setColorPicker] = useState((mode === 'colorPicker') ? true : false);
     const toggleColorPicker = () => {
         setColorPicker(!colorPicker);
         mode = (!colorPicker) ? 'colorPicker' : null;
@@ -128,16 +128,19 @@ function ToolBar(prop){
         mode = (!eraser) ? 'eraser' : null;
         console.log(mode)
     };
-
-    setColor(currentColor);
+    
+    if(prop.color)
+        setColor(prop.color);
+    else
+        setColor(currentColor);
 
     console.log(prop.color)
 
     return (
         <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
             <input type="color" value={(prop.color) ? prop.color : prop.tiles[0].props.c} id="colorPicker" onChange={() => {changeColor()}}></input>
-            <button onClick={() => {toggleColorPicker()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (colorPicker) ? '#cfc1c1' : '#303336'}}><CgColorPicker size={'75%'} color={(colorPicker) ? '#303336': '#cfc1c1'}/></button>
-            <button onClick={() => {toggleEraser()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
+            <button onClick={() => {if(eraser) {toggleEraser();} toggleColorPicker()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (colorPicker) ? '#cfc1c1' : '#303336'}}><CgColorPicker size={'75%'} color={(colorPicker) ? '#303336': '#cfc1c1'}/></button>
+            <button onClick={() => {if(colorPicker) {toggleColorPicker();} toggleEraser()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
         </div>
     );
 
@@ -176,14 +179,23 @@ export function BoardAssembler(prop){
     
     for(let row = 0; row < Math.sqrt(tileNum); row++){
         for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-            let color = (prop.board == null) ? 'black' : prop.board[row * Math.sqrt(tileNum) + tile].props.c;
+            let color = '#000000';
+            if(tileColor == null){
+                color = (prop.board == null) ? '#000000' : prop.board[row * Math.sqrt(tileNum) + tile].props.c;
 
-            if(image != null)
-                color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
-            
+                if(image != null)
+                    color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
+            }
+            else{
+                color = (getTilesColors() == null) ? '#000000' : getTilesColors()[row * Math.sqrt(tileNum) + tile];
+
+                if(image != null)
+                    color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
+                }
             tiles.push(<Tile setColorPicker={setColorPicker} boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
+    
 
     setTiles(tiles);
 
@@ -247,7 +259,8 @@ function loadImage(setImage){
                     var blue = pixels[i + 2];
 
                     // Store pixel color as an RGB string
-                    board.push("rgb(" + red + ", " + green + ", " + blue + ")");
+                    board.push("#" + toHex(red) + toHex(green) + toHex(blue));
+                    console.log(board[board.length - 1]);
                 }
 
                 console.log(board);
@@ -260,3 +273,6 @@ function loadImage(setImage){
     }
 }
 
+function toHex(d) {
+    return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+}

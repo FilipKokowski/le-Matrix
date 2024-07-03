@@ -9,6 +9,7 @@ import { clearDB, setNightMode } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
+import { mode } from "./Boards";
 
 export function Settings(){
 

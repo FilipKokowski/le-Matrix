@@ -57,7 +57,6 @@ export function Tile(prop){
     if(mode !== 'colorPicker'){
       setBgColor(color);
       tilesColors[prop.text - 1] = color;
-      console.log(prop.id);
     }
     else
       prop.setColorPicker(currentColor);

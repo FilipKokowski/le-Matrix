@@ -9,7 +9,7 @@ import { setPowerState, getPowerState } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile } from './App';
-import { Board, BoardAssembler } from "./Boards";
+import { Board, BoardAssembler, mode } from "./Boards";
 
 export function PowerButton(){
     const [currentMode, setMode] = useState(null);
@@ -32,6 +32,7 @@ export function PowerButton(){
   
 //Navbar destinations
 export function Home(prop){
+
     const [val, set] = useState(false);
     const update = () => {
         set(!val);
