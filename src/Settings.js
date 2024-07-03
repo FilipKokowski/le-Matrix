@@ -9,7 +9,6 @@ import { clearDB, setNightMode } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
-import { mode } from "./Boards";
 
 export function Settings(){
 
@@ -27,11 +26,7 @@ export function Settings(){
   const sliderDimmest = '2f4d4b';
   const sliderBrightest = '08a177';
 
-  const [sliderVal, setSV] = useState(0);
-  const sliderUpdate = (val) => {
-    setSV(val);
-
-    window.localStorage.setItem('dimmSlider', sliderVal);
+  const calculateColor = (val) => {
 
     let diffred = Number('0x' + sliderBrightest.substring(0,2)) - Number('0x' + sliderDimmest.substring(0,2));
     let red = Number('0x' + sliderDimmest.substring(0,2)) + diffred * val / 100;
@@ -42,13 +37,38 @@ export function Settings(){
     let diffblue = Number('0x' + sliderBrightest.substring(4,6)) - Number('0x' + sliderDimmest.substring(0,2));
     let blue = Number('0x' + sliderDimmest.substring(4,6)) + diffblue * val / 100;
 
+
+    return 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+  }
+
+  //Restoring saved thumb color
+  var style = document.createElement('style');
+  style.innerHTML = `
+      #dimmSlider::-webkit-slider-thumb {
+          background: ${calculateColor(window.localStorage.getItem('dimmSlider'))};
+      }
+      #dimmSlider::-moz-range-thumb {
+          background: ${calculateColor(window.localStorage.getItem('dimmSlider'))};
+      }
+  `;
+  document.head.appendChild(style);
+
+
+  //Updating value and color of a slider on interaction
+  const [sliderVal, setSV] = useState(window.localStorage.getItem('dimmSlider'));
+  const sliderUpdate = (val) => {
+    setSV(val);
+    
+    console.log(val);
+    window.localStorage.setItem('dimmSlider', val);
+
     var style = document.createElement('style');
     style.innerHTML = `
         #dimmSlider::-webkit-slider-thumb {
-            background: rgb(${red},${green},${blue});
+            background: ${calculateColor(val)};
         }
         #dimmSlider::-moz-range-thumb {
-            background: rgb(${red},${green},${blue});
+            background: ${calculateColor(val)};
         }
     `;
 
@@ -73,7 +93,7 @@ export function Settings(){
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <div style={{display: 'flex', alignItems: 'center', width: '42vh', height: '6vh', border: 'none', borderRadius: '2vh', paddingLeft: '1vh', backgroundColor: '#50956F', fontSize: '2.25vh', fontWeight: 'bold'}}>
               {/* <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '5vh', height: '5vh', color: '#FFF6E8', borderRadius: '2.5vh', backgroundColor: '#2f4d4b'}}><FaLightbulb size={'50%'} color="#437573"/></div> */}
-              <input type="range" id="dimmSlider" onChange={() => {sliderUpdate(document.getElementById('dimmSlider').value)}}></input>
+              <input type="range" on defaultValue={window.localStorage.getItem('dimmSlider')} id="dimmSlider" onChange={() => {sliderUpdate(document.getElementById('dimmSlider').value)}}></input>
             </div>
           </div>
         </div>
