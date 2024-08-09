@@ -1,11 +1,11 @@
 //Icons
-import { FaMoon, FaLightbulb} from "react-icons/fa";
+import { FaMoon} from "react-icons/fa";
 import { MdDeleteSweep } from "react-icons/md";
 import { IoLogInOutline } from "react-icons/io5";
 
 //Functions
-import { useState, React} from 'react';
-import { clearDB, setNightMode } from "./dbFunctions";
+import { useState, React, useEffect} from 'react';
+import { clearDB, setNightMode, setBrightness } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
@@ -74,9 +74,11 @@ export function Settings(){
 
     document.head.appendChild(style);
 
+    setBrightness(window.localStorage.getItem('board'), val);
+
     //console.log('rgb(' + red + ", " + green + ", " + blue + ")");
   }
-
+  
   if(getConnected() && !nightMode)
     return(
       <div>
@@ -93,7 +95,7 @@ export function Settings(){
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <div style={{display: 'flex', alignItems: 'center', width: '42vh', height: '6vh', border: 'none', borderRadius: '2vh', paddingLeft: '1vh', backgroundColor: '#50956F', fontSize: '2.25vh', fontWeight: 'bold'}}>
               {/* <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '5vh', height: '5vh', color: '#FFF6E8', borderRadius: '2.5vh', backgroundColor: '#2f4d4b'}}><FaLightbulb size={'50%'} color="#437573"/></div> */}
-              <input type="range" on defaultValue={window.localStorage.getItem('dimmSlider')} id="dimmSlider" onChange={() => {sliderUpdate(document.getElementById('dimmSlider').value)}}></input>
+              <input type="range" defaultValue={window.localStorage.getItem('dimmSlider')} id="dimmSlider" onChange={() => {sliderUpdate(document.getElementById('dimmSlider').value)}}></input>
             </div>
           </div>
         </div>

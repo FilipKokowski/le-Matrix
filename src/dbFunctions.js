@@ -59,6 +59,10 @@ export async function getSelected(code){
     return data[0];
 }
 
+export async function setBrightness(code, brightness){
+    await supabase.from('system').update({brightness: brightness}).eq('code', code);
+}
+
 export async function setNightMode(code, from, to, dimmTo = '0'){
     if(dimmTo === 0)
         await supabase.from('system').update({from: from, to: to, mode: 'turnOff', dimmTo: '0'}).eq('code', code);

@@ -7,7 +7,7 @@ import {  IoSend} from "react-icons/io5";
 import './App.css';
 
 //Functions
-import {useState, React, useRef, useEffect} from 'react';
+import {useState, React, useRef, useEffect, createRef} from 'react';
 import { getCode } from "./dbFunctions";
 
 //Components
@@ -63,8 +63,27 @@ export function Tile(prop){
     
   }
 
+  const divRef = createRef();
+
+  const isTouchOver = (event) => {
+    const touch = event.touches[0] // Get the first touch point
+    const rect = divRef.current.getBoundingClientRect(); // Get the div's position and size
+
+    console.log(touch.clientX >= rect.left &&
+      touch.clientX <= rect.right &&
+      touch.clientY >= rect.top &&
+      touch.clientY <= rect.bottom)
+
+    return (
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom
+    );
+  }
+
   return(
-    <div onClick={(prop.editable) ? changeColor : () => {}} style={{width: prop.size, height: prop.size, minWidth: prop.size, minHeight: prop.size, backgroundColor: currentColor, float: 'left'}}></div>
+    <div ref={divRef} onTouchMoveCapture={(e) => {isTouchOver(e) && changeColor()}} style={{width: prop.size, height: prop.size, minWidth: prop.size, minHeight: prop.size, backgroundColor: currentColor, float: 'left'}}></div>
   );
 }
 
