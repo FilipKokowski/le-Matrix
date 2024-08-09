@@ -76,7 +76,7 @@ export function Home(prop){
                     <PowerButton/>
                 </div>
                 <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '4vw'}}>
-                    <img style={{height: '30vh'}} src={require('./res/cat.png')}></img>
+                    <img style={{height: '30vh'}} src={require('./res/cat.png')} alt="Silly little kitten"></img>
                 </div>   
             </div>
         </div>

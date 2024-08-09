@@ -6,7 +6,7 @@ import { CgColorPicker } from "react-icons/cg";
 
 //Functions
 import { useState, useEffect, React} from 'react';
-import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, getTiles, id, setID } from './App';
+import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, id, setID } from './App';
 import { getDBBoards, getSelected, setSelected, supabase } from "./dbFunctions";
 
 //Components
@@ -62,16 +62,16 @@ export function Board(prop){
 
 }
   
-export function Boards(){
+export function Boards(prop){
     const [val, set] = useState(false);
     const update = () => {
         set(!val);
     };
 
     const [boardAss, setBoardAss] = useState(false);
-    const toggleBoardAss = () => {
+    const toggleBoardAss = (className) => {
         setBoardAss(!boardAss);
-        swapClasses('boardsOn');
+        swapClasses(className);
     };
 
     const [boardT, setBoardTemplate] = useState(null);
@@ -87,7 +87,7 @@ export function Boards(){
             let boardsLocal = []
 
             for(let board = 0; board < result.length; board++){
-                boardsLocal.push(<Board onClick={() => {setID(result[board][0].props.boardID); toggleBoardAss(); boardTemplate(result[board]); swapClasses('boardAssemblerOn')}} id={board.toString()} key={board}/>);
+                boardsLocal.push(<Board onClick={() => {setID(result[board][0].props.boardID); toggleBoardAss('boardsOn'); boardTemplate(result[board]); swapClasses('boardAssemblerOn')}} id={board.toString()} key={board}/>);
             }
             setBoards(boardsLocal);
         };
@@ -100,12 +100,12 @@ export function Boards(){
         <div>
             <h1>Your boards</h1>
             <div id='slider' style={{height: '15vh', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', marginTop: '6vh', overflowX: 'scroll'}}> 
-                <Board onClick={() => {toggleBoardAss(); swapClasses('boardAssemblerOn')}} key='0'></Board>
+                <Board onClick={() => {toggleBoardAss('boardsOn'); swapClasses('boardAssemblerOn')}} key='0'></Board>
                 {boards}
             </div>
         </div>
         );
-    else if(getConnected() && boardAss) return <BoardAssembler update={toggleBoardAss} board={boardT}/>
+    else if(getConnected() && boardAss) return <BoardAssembler swap={prop.swap} update={toggleBoardAss} board={boardT}/>
     else return <NoConnection screen='boards' update={update} parent={'boards'}/>
 }
 
@@ -210,8 +210,8 @@ export function BoardAssembler(prop){
             </div>
             <ToolBar color={tileColor} tiles={tiles}/>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else updateBoard(window.localStorage.getItem('board')); prop.update()}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update()}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
                 <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
                 <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
             </div>
@@ -230,35 +230,26 @@ function loadImage(setImage){
             img.onload = function() {
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
-
-                // Determine the size of the square crop
                 var size = Math.min(img.width, img.height);
 
-                // Set the canvas dimensions to be square and scaled
                 canvas.width = 15;
                 canvas.height = 15;
 
-                // Calculate the position for cropping
                 var x = (img.width - size) / 2;
                 var y = (img.height - size) / 2;
 
-                // Draw the square cropped image onto the canvas
                 ctx.drawImage(img, x, y, size, size, 0, 0, 15, 15);
 
-                // Get pixel data from the cropped canvas
                 var imageData = ctx.getImageData(0, 0, 15, 15);
                 var pixels = imageData.data;
 
                 let board = [];
 
-                // Iterate through pixels
                 for (var i = 0; i < pixels.length; i += 4) {
-                    // Extract RGB values
                     var red = pixels[i];
                     var green = pixels[i + 1];
                     var blue = pixels[i + 2];
 
-                    // Store pixel color as an RGB string
                     board.push("#" + toHex(red) + toHex(green) + toHex(blue));
                     console.log(board[board.length - 1]);
                 }

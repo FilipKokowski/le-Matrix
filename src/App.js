@@ -117,7 +117,7 @@ function BottomPanelContent(prop){
   if(prop.screen === "home")
     return (<Home swap={prop.swap}/>);
   else if(prop.screen === "boards")
-    return (<Boards/>);
+    return (<Boards swap={prop.swap}/>);
   else if(prop.screen === "settings")
     return (<Settings/>);
 }
