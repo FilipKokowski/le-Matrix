@@ -5,7 +5,7 @@ import { FaInstagram} from "react-icons/fa";
 //Functions
 import { useState, useEffect, React} from 'react';
 import { getConnected, setTiles, swapClasses } from './App';
-import { setPowerState, getPowerState } from "./dbFunctions";
+import { setPowerState, getPowerState, getBoardData, getSelected } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile } from './App';
@@ -46,6 +46,19 @@ export function Home(prop){
 
     const [clicks, setClicks] = useState(0);
 
+    const [boardName, setBN] = useState();
+    const [boardDate, setBD] = useState();
+
+    useEffect(() => {
+        const fetchBoardData = async () => {
+            const data = await getBoardData((await getSelected(window.localStorage.getItem('board'))).selected);
+            setBN(data[0]);
+            setBD(data[1])
+        }
+
+        fetchBoardData();
+    }, [])
+
     if(getConnected() && !boardAss){
 
         const boardThumbnailSize = window.innerHeight / 100 * 15;
@@ -67,8 +80,8 @@ export function Home(prop){
             <h1>Home</h1>
             <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
                 <Board id='current'/>
-                <h2 style={{marginTop: '0'}}>Random colors</h2>
-                <h3>Set since 11.09.2001</h3>
+                <h2 style={{marginTop: '0'}}>{boardName}</h2>
+                <h3>Set since {(boardDate !== '2001-01-01') ? boardDate : 'unknown'}</h3>
                 <button onClick={() => { prop.swap('boards');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
             </div>
             <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>

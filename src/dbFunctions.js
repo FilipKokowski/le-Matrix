@@ -47,7 +47,26 @@ export async function getDBBoards(code, editable){
 
 }
 
+export async function getDBBoard(id){
+    let {data} = await supabase.from('boards').select().eq('id', id);
+
+    let boards = [];
+
+    data.forEach(element => {
+        let board = [];
+        Object.entries(JSON.parse(element.board)).forEach((entry) => {
+            const [key, value] = entry;
+            if(!isNaN(key))
+                board.push(<Tile boardID={element.id} key={key} text={key} c={value} size={window.innerHeight / 100}/>)
+        });
+        boards.push(board);
+    });
+
+    return boards;
+}
+
 export async function setSelected(code, id){
+    console.log("dawdaw");
     await supabase.from('system').update({selected: id}).eq('code', code);
 }
 
@@ -74,4 +93,22 @@ export async function setNightMode(code, from, to, dimmTo = '0'){
 export async function getNightMode(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     return data[0];
+}
+
+
+export async function getNightModeScope(code){
+    const {data} = await supabase.from('system').select().eq('code', code);
+    return [data[0]['from'], data[0]['to']];
+}
+
+export async function getBoardData(id){
+    const {data} = await supabase.from('boards').select().eq('id', id);
+    return [data[0]['name'], data[0]['date_of_creation']];
+}
+
+export async function setBoardData(id, name, date){
+    if(name !== null && date === null)
+        await supabase.from('system').update({name: name}).eq('id', id);
+    else if(name === null && date !== null)
+        await supabase.from('system').update({date: date}).eq('id', id);
 }

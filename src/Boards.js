@@ -8,7 +8,7 @@ import { CgColorPicker } from "react-icons/cg";
 //Functions
 import { useState, useEffect, React} from 'react';
 import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, id, setID } from './App';
-import { getDBBoards, getSelected, setSelected, supabase } from "./dbFunctions";
+import { getDBBoards, getSelected, setSelected, supabase, getDBBoard, getBoardData} from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile, TileHandler } from './App';
@@ -17,7 +17,7 @@ export let mode = null;
 
 export let colorPickerColor = null;
 
-//Directs to board designer, or if ID is assigned, then shows thumbnail and directs to settings of that board
+//Directs to board designer, or if ID is assigned, shows thumbnail and directs to settings of that board
 export function Board(prop){
     const [board, setBoard] = useState(null);
 
@@ -25,18 +25,9 @@ export function Board(prop){
         const fetchBoards = async () => {
             if(prop.id){
                 if(prop.id === 'current'){
+                    const current = await getDBBoard(JSON.parse((await getSelected(window.localStorage.getItem('board'))).selected));
 
-                    const current = await getSelected(window.localStorage.getItem('board'));
-                    let currentBoard = [];
-
-                    Object.entries(JSON.parse(current.selected)).forEach((entry) => {
-                        const [key, value] = entry;
-                        if(key >= 0 && key < 255)
-                            currentBoard.push(<Tile size={window.innerHeight / 100} text={key} key={key} c={value}/>)
-                    });
-                    
-
-                    setBoard(currentBoard);
+                    setBoard(current);
                 } else {
                     const result = await getDBBoards(window.localStorage.getItem('board'));
                     setBoard(result[prop.id]);
@@ -155,6 +146,17 @@ export function BoardAssembler(prop){
         setTileColor(c);
     };
 
+    const [boardName, setBN] = useState();
+
+    useEffect(() => {
+        const fetchBoardName = async () => {
+            setBN((await getBoardData(id))[0]);
+        }
+
+        fetchBoardName();
+    }, [])
+
+
     async function exportBoard(){
         await supabase.from('boards').insert({code: window.localStorage.getItem('board'), board: JSON.stringify(getTilesColors().slice(0,255))})
     }
@@ -162,15 +164,11 @@ export function BoardAssembler(prop){
     async function updateBoard(){
         console.log(getTilesColors().slice(0,255))
         
-        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
+        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255)), name: document.getElementById('boardName').value}).eq('id', id);
     }
 
     async function removeBoard(){        
         await supabase.from('boards').delete().eq('id', id);
-    }
-
-    async function updateSelected(){
-        await supabase.from('system').update({selected: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
 
 
@@ -200,7 +198,7 @@ export function BoardAssembler(prop){
 
     setTiles(tiles);
 
-    let title = (prop.board == null) ? <h1>Create new board</h1> : <><h1>Edit your board</h1></>;
+    let title = (prop.board == null) ? <h1 >Create <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1> : <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Edit <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1>;
 
     return (
         <div>
@@ -213,7 +211,7 @@ export function BoardAssembler(prop){
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {removeBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#aa4444', color: '#ed8787', fontWeight: 'bold', marginRight: '5vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><FaRegTrashCan size={'65%'}></FaRegTrashCan></button>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '30vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#a499c4', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), id); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#a499c4', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
                 <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#ab8998', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
                 <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
             </div>

@@ -5,7 +5,7 @@ import { IoLogInOutline } from "react-icons/io5";
 
 //Functions
 import { useState, React, useEffect} from 'react';
-import { clearDB, setNightMode, setBrightness } from "./dbFunctions";
+import { clearDB, setNightMode, setBrightness, getNightModeScope } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
@@ -113,6 +113,8 @@ function NightMode(prop){
   const changeMode = (m) => {
     setMode(m);
   };
+  
+  
 
   return (
     <div>
