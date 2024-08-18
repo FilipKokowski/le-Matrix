@@ -179,13 +179,13 @@ export function BoardAssembler(prop){
             if(tileColor == null){
                 color = (prop.board == null) ? '#000000' : prop.board[row * Math.sqrt(tileNum) + tile].props.c;
 
-                if(image != null)
+                if(image !== null)
                     color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
             }
             else{
                 color = (getTilesColors() == null) ? '#000000' : getTilesColors()[row * Math.sqrt(tileNum) + tile];
 
-                if(image != null)
+                if(image !== null)
                     color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
                 }
             tiles.push(<Tile setColorPicker={setColorPicker} id='Tile' boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)

@@ -7,12 +7,12 @@ import {  IoSend} from "react-icons/io5";
 import './App.css';
 
 //Functions
-import {useState, React, useRef, useEffect, createRef} from 'react';
+import {useState, React, useRef} from 'react';
 import { getCode } from "./dbFunctions";
 
 //Components
 import { Settings } from "./Settings";
-import { Boards, colorPickerColor, mode } from "./Boards";
+import { Boards, mode } from "./Boards";
 import { Home } from "./Home";
 
 export let id = 0;
@@ -166,7 +166,7 @@ function BottomPanel(){
       <BottomPanelContent screen={currentScreen} swap={swapScreens}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
             <FaHome onClick={() => {if(currentScreen !== 'home') swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen !== 'boards') swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <IoIosSettings onClick= {() => {if(currentScreen !== 'settings') swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
     </div>
