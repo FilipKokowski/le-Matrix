@@ -18,11 +18,8 @@ export async function getPowerState(code){
 }
 
 export async function setPowerState(code, state){
-
-    console.log(code + "   " + state);
     await supabase.from('system').update({powerOn: state}).eq('code', code);   
     toggleNotification((state) ? 'Board has been turned on' : 'Board has been turned off');
-
 }
 
 export async function clearDB(code){
@@ -64,7 +61,9 @@ export async function setBrightness(code, brightness){
 }
 
 export async function setNightMode(code, from, to, dimmTo = '0'){
-    if(dimmTo === 0)
+    if(from === undefined || to === undefined)
+        await supabase.from('system').update({from: null, to: null, mode: null, dimmTo: '0'}).eq('code', code);
+    else if(dimmTo === 0)
         await supabase.from('system').update({from: from, to: to, mode: 'turnOff', dimmTo: '0'}).eq('code', code);
     else
         await supabase.from('system').update({from: from, to: to, mode: 'dimmTo', dimmTo: dimmTo}).eq('code', code);

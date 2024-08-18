@@ -84,7 +84,7 @@ export function Settings(){
         <h1>Settings</h1>
         <div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center'}}>
-            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '25.5vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/dog.png')}></img></div>
+            <div style={{marginBottom:'1.5vh', marginRight: '2vh', width: '26vh', height: '22vh', backgroundColor: '#F5E7D9', borderRadius: '2vh', overflow: 'hidden'}}><img style={{width: '100%', height: '100%'}} src={require('./res/dog.png')}></img></div>
             <button onClick={() => {toggleNightMode()}} style={{width: '14vh', height: '22vh', border: 'none', borderRadius: '2vh', backgroundColor: '#644c75', fontSize: '2.25vh', fontWeight: 'bold'}}><FaMoon size={'50%'} color="#8d70a1"/></button>
           </div>
           <div style={{width: '100vw', display: 'flex', justifyContent: 'center', paddingBottom: '2vh'}}>
@@ -107,16 +107,12 @@ export function Settings(){
 
 function NightMode(prop){
 
-  const [nightMode, toggleNightMode] = useState(false);
+  const [nightMode, toggleNightMode] = useState(window.localStorage.getItem('nightMode') === "true");
 
   const [mode, setMode] = useState(-1);
   const changeMode = (m) => {
     setMode(m);
   };
-
-  useEffect(() => {
-
-  }, [mode])
 
   return (
     <div>
@@ -126,8 +122,8 @@ function NightMode(prop){
         <input id='to' type="time"></input>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
-        <button onClick={() => {toggleNightMode(!nightMode); changeMode(-1)}} style={{marginTop: '4vw', width: '15vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (nightMode) ? '#77dd77' : '#ee6666', color: (nightMode) ? '#274f27': '#912a2a', fontWeight: 'bold'}}>Toggle</button>
-        <button onClick={() => {if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && (!isNaN(parseInt(document.getElementById('dimmTo').value)) || mode === 2)) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, (mode === 2) ? 0 : document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '10vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1', fontWeight: 'bold'}}>Set</button>
+        <button onClick={() => {toggleNightMode(!nightMode); changeMode(-1); window.localStorage.setItem('nightMode', !nightMode)}} style={{marginTop: '4vw', width: '15vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (nightMode) ? '#77dd77' : '#ee6666', color: (nightMode) ? '#274f27': '#912a2a', fontWeight: 'bold'}}>Toggle</button>
+        <button onClick={() => {if(!nightMode) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board')); } else if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && (!isNaN(parseInt(document.getElementById('dimmTo').value)) || mode === 2)) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, (mode === 2) ? 0 : document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '10vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1', fontWeight: 'bold'}}>Set</button>
         <button onClick={() => {if(nightMode) changeMode(2)}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 2) ? '#cfc1c1' : '#303336', color: (mode === 2) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Turn off</button>
         <button onClick={() => {if(nightMode) changeMode(3)}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 3) ? '#cfc1c1' : '#303336', color: (mode === 3) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Dimm to <input id='dimmTo' type="text" maxLength={2} style={{background: 'transparent', width: '6vw', border: 'none', color: (mode === 3) ? '#303336': '#cfc1c1', borderBottom: '1px solid'}}></input> %</button>
       </div>

@@ -44,6 +44,8 @@ export function Home(prop){
         swapClasses('homeOn');
     };
 
+    const [clicks, setClicks] = useState(0);
+
     if(getConnected() && !boardAss){
 
         const boardThumbnailSize = window.innerHeight / 100 * 15;
@@ -77,7 +79,7 @@ export function Home(prop){
                     <PowerButton/>
                 </div>
                 <div style={{overflow: 'hidden', width:'27vh', height: '30vh',  display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5E7D9', borderRadius: '4vw'}}>
-                    <img style={{height: '30vh'}} src={require('./res/cat.png')} alt="Silly little kitten"></img>
+                    <img id="cat" style={{height: '30vh'}} onClick={() => {setClicks(clicks + 1)}} src={(clicks < 10) ? require('./res/cat.png') : require('./res/jelqer.png')} alt="Silly little kitten"></img>
                 </div>   
             </div>
         </div>
