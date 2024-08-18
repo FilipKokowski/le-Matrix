@@ -59,7 +59,6 @@ export function Settings(){
   const sliderUpdate = (val) => {
     setSV(val);
     
-    console.log(val);
     window.localStorage.setItem('dimmSlider', val);
 
     var style = document.createElement('style');
@@ -107,16 +106,17 @@ export function Settings(){
 }
 
 function NightMode(prop){
-  const [turnOff, setTurnOff] = useState(true);
-  const toggleTurnOff = () => {
-    setTurnOff(!turnOff);
+
+  const [nightMode, toggleNightMode] = useState(false);
+
+  const [mode, setMode] = useState(-1);
+  const changeMode = (m) => {
+    setMode(m);
   };
 
-  const [dimmBy, setDimmBy] = useState(false);
-  const toggleDimmBy = () => {
-    setDimmBy(!dimmBy);
-  };
+  useEffect(() => {
 
+  }, [mode])
 
   return (
     <div>
@@ -126,9 +126,10 @@ function NightMode(prop){
         <input id='to' type="time"></input>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
-        <button onClick={() => {if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && !isNaN(parseInt(document.getElementById('dimmTo').value))) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, (turnOff) ? 0 : document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1'}}>Set</button>
-        <button onClick={() => {if(!turnOff){toggleTurnOff(); toggleDimmBy()}}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (turnOff) ? '#cfc1c1' : '#303336', color: (turnOff) ? '#303336': '#cfc1c1'}}>Turn off</button>
-        <button onClick={() => {if(!dimmBy){toggleDimmBy(); toggleTurnOff()}}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (dimmBy) ? '#cfc1c1' : '#303336', color: (dimmBy) ? '#303336': '#cfc1c1'}}>Dimm to <input id='dimmTo' type="text" maxLength={3} style={{width: '6vw', border: 'none', backgroundColor: (dimmBy) ? '#303336': '#cfc1c1', color: (dimmBy) ? '#cfc1c1': '#303336'}}></input> %</button>
+        <button onClick={() => {toggleNightMode(!nightMode); changeMode(-1)}} style={{marginTop: '4vw', width: '15vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (nightMode) ? '#77dd77' : '#ee6666', color: (nightMode) ? '#274f27': '#912a2a', fontWeight: 'bold'}}>Toggle</button>
+        <button onClick={() => {if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && (!isNaN(parseInt(document.getElementById('dimmTo').value)) || mode === 2)) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, (mode === 2) ? 0 : document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '10vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1', fontWeight: 'bold'}}>Set</button>
+        <button onClick={() => {if(nightMode) changeMode(2)}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 2) ? '#cfc1c1' : '#303336', color: (mode === 2) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Turn off</button>
+        <button onClick={() => {if(nightMode) changeMode(3)}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 3) ? '#cfc1c1' : '#303336', color: (mode === 3) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Dimm to <input id='dimmTo' type="text" maxLength={2} style={{background: 'transparent', width: '6vw', border: 'none', color: (mode === 3) ? '#303336': '#cfc1c1', borderBottom: '1px solid'}}></input> %</button>
       </div>
     </div>
   )

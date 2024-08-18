@@ -4,12 +4,12 @@ import { FaInstagram} from "react-icons/fa";
 
 //Functions
 import { useState, useEffect, React} from 'react';
-import { getConnected, setTiles, swapClasses, toggleNotification } from './App';
+import { getConnected, setTiles, swapClasses } from './App';
 import { setPowerState, getPowerState } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile } from './App';
-import { Board, BoardAssembler, getMode } from "./Boards";
+import { Board, BoardAssembler } from "./Boards";
 
 export function PowerButton(){
     const [currentMode, setMode] = useState(null);
@@ -45,6 +45,7 @@ export function Home(prop){
     };
 
     if(getConnected() && !boardAss){
+
         const boardThumbnailSize = window.innerHeight / 100 * 15;
         
         let tiles = [];

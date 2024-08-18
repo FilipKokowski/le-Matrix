@@ -34,6 +34,7 @@ export function Board(prop){
                         if(key >= 0 && key < 255)
                             currentBoard.push(<Tile size={window.innerHeight / 100} text={key} key={key} c={value}/>)
                     });
+                    
 
                     setBoard(currentBoard);
                 } else {
@@ -111,7 +112,7 @@ export function Boards(prop){
 }
 
 function ToolBar(prop){
-    const [currentColor, setBgColor] = useState(() => { setColor(prop.tiles[128].props.c); return getColor(); });
+    const [currentColor, setBgColor] = useState(() => { setColor(prop.tiles[112].props.c); return getColor(); });
     const changeColor = () => {
         setBgColor(document.getElementById('colorPicker').value);
         setColor(document.getElementById('colorPicker').value)
@@ -130,12 +131,11 @@ function ToolBar(prop){
         mode = (!eraser) ? 'eraser' : null;
         console.log(mode)
     };
-    
 
 
     return (
         <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-            <input type="color" id="colorPicker" onChange={() => {changeColor()}}></input>
+            <input type="color" id="colorPicker" defaultValue={getColor()} onChange={() => {changeColor()}}></input>
             <button onClick={() => {if(eraser) {toggleEraser();} toggleColorPicker()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (colorPicker) ? '#cfc1c1' : '#303336'}}><CgColorPicker size={'75%'} color={(colorPicker) ? '#303336': '#cfc1c1'}/></button>
             <button onClick={() => {if(colorPicker) {toggleColorPicker();} toggleEraser()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
         </div>
@@ -211,10 +211,10 @@ export function BoardAssembler(prop){
             </div>
             <ToolBar tiles={tiles}/>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else {removeBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#aa4444', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><FaRegTrashCan size={'65%'}></FaRegTrashCan></button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {removeBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#aa4444', color: '#ed8787', fontWeight: 'bold', marginRight: '5vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><FaRegTrashCan size={'65%'}></FaRegTrashCan></button>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '30vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
-                <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#a499c4', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
+                <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#ab8998', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
                 <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
             </div>
         </div>
