@@ -9,7 +9,7 @@ import { setPowerState, getPowerState } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile } from './App';
-import { Board, BoardAssembler, mode } from "./Boards";
+import { Board, BoardAssembler, getMode } from "./Boards";
 
 export function PowerButton(){
     const [currentMode, setMode] = useState(null);

@@ -110,9 +110,10 @@ export function Boards(prop){
 }
 
 function ToolBar(prop){
-    const [currentColor, setBgColor] = useState(getColor());
+    const [currentColor, setBgColor] = useState(() => { setColor(prop.tiles[128].props.c); return getColor(); });
     const changeColor = () => {
         setBgColor(document.getElementById('colorPicker').value);
+        setColor(document.getElementById('colorPicker').value)
     }
 
     const [colorPicker, setColorPicker] = useState((mode === 'colorPicker') ? true : false);
@@ -129,16 +130,11 @@ function ToolBar(prop){
         console.log(mode)
     };
     
-    if(prop.color)
-        setColor(prop.color);
-    else
-        setColor(currentColor);
 
-    console.log(prop.color)
 
     return (
         <div style={{width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '3vw'}}>
-            <input type="color" value={(prop.color) ? prop.color : prop.tiles[0].props.c} id="colorPicker" onChange={() => {changeColor()}}></input>
+            <input type="color" id="colorPicker" onChange={() => {changeColor()}}></input>
             <button onClick={() => {if(eraser) {toggleEraser();} toggleColorPicker()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (colorPicker) ? '#cfc1c1' : '#303336'}}><CgColorPicker size={'75%'} color={(colorPicker) ? '#303336': '#cfc1c1'}/></button>
             <button onClick={() => {if(colorPicker) {toggleColorPicker();} toggleEraser()}} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', marginLeft: '2vw', backgroundColor: (eraser) ? '#cfc1c1' : '#303336'}}><FaEraser size={'75%'} color={(eraser) ? '#303336': '#cfc1c1'}/></button>
         </div>
@@ -192,7 +188,7 @@ export function BoardAssembler(prop){
                 if(image != null)
                     color = (image[1 + row * Math.sqrt(tileNum) + tile]) ? image[row * Math.sqrt(tileNum) + tile] : image[row * Math.sqrt(tileNum) + tile];
                 }
-            tiles.push(<Tile setColorPicker={setColorPicker} boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
+            tiles.push(<Tile setColorPicker={setColorPicker} id='Tile' boardID={id} c={color} key={Math.floor(Math.random() * (1000000001))} text={1 + row * Math.sqrt(tileNum) + tile} size={tileSize} editable={true}/>)
         }
     }
     
@@ -208,7 +204,7 @@ export function BoardAssembler(prop){
             <div style={{width: '90vw', height: '90vw', margin: 'auto'}}>
                 <TileHandler tiles={tiles}/>
             </div>
-            <ToolBar color={tileColor} tiles={tiles}/>
+            <ToolBar tiles={tiles}/>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>

@@ -19,7 +19,7 @@ export let id = 0;
 let tiles = [];
 let tilesColors = [];
 
-let color = '#f6b73c';
+let color = '#ffffff';
 
 let connected = false;
 
@@ -44,46 +44,43 @@ export function TileHandler(prop){
     set(!val);
   };
 
-  return <div onClick={() => {if(mode === 'clear') {color = 'black'; update();} else if(mode === 'bucket') update(); else if(mode === 'eraser') color = 'black';}}>{prop.tiles}</div>;
+  const changeColor = (e) => {
+
+    const tile = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    
+    if(tile !== null && tile.id.substring(0,4) === 'Tile'){
+      switch(mode){
+        case 'eraser':
+          tilesColors[tile.id.substring(5) - 1] = '#000000';
+          tile.style.backgroundColor = '#000000';
+          break;
+
+        case 'colorPicker':
+          setColor(tilesColors[tile.id.substring(5) - 1]);
+          console.log(tile.id.substring(5) - 1);
+          document.getElementById('colorPicker').value = tilesColors[tile.id.substring(5) - 1];
+          
+          break;
+
+        default:
+          tilesColors[tile.id.substring(5) - 1] = color;
+          tile.style.backgroundColor = color;
+            
+      }
+      update();  
+    }
+  }
+
+  return <div onTouchStart={(e) => {changeColor(e)}} onTouchMove={(e) => {changeColor(e)}}>{prop.tiles}</div>;
 }
+
 
 //Tile representing one pixel on the board
 export function Tile(prop){
-
-  //let c = 'rgb(' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ', ' + Math.floor(Math.random()*(255 + 1)) + ')'; tilesColors[text - 1] = c; return c;
-
   const [currentColor, setBgColor] = useState(() => {tilesColors[prop.text - 1] = prop.c; return prop.c;});
-  const changeColor = () => {
-    if(mode !== 'colorPicker'){
-      setBgColor(color);
-      tilesColors[prop.text - 1] = color;
-    }
-    else
-      prop.setColorPicker(currentColor);
-    
-  }
-
-  const divRef = createRef();
-
-  const isTouchOver = (event) => {
-    const touch = event.touches[0] // Get the first touch point
-    const rect = divRef.current.getBoundingClientRect(); // Get the div's position and size
-
-    console.log(touch.clientX >= rect.left &&
-      touch.clientX <= rect.right &&
-      touch.clientY >= rect.top &&
-      touch.clientY <= rect.bottom)
-
-    return (
-        touch.clientX >= rect.left &&
-        touch.clientX <= rect.right &&
-        touch.clientY >= rect.top &&
-        touch.clientY <= rect.bottom
-    );
-  }
 
   return(
-    <div ref={divRef} onTouchMoveCapture={(e) => {isTouchOver(e) && changeColor()}} style={{width: prop.size, height: prop.size, minWidth: prop.size, minHeight: prop.size, backgroundColor: currentColor, float: 'left'}}></div>
+    <div id={`${prop.id}-${prop.text}`} style={{width: prop.size, height: prop.size, minWidth: prop.size, minHeight: prop.size, backgroundColor: currentColor, float: 'left'}}></div>
   );
 }
 
@@ -93,7 +90,7 @@ export function NoConnection(prop){
   const [connecting, set] = useState(true);
 
   const swapScreens = (con = []) => { 
-    if(con.length != 0){
+    if(con.length !== 0){
       connected = (con[0]) ? true : false;
     
       window.localStorage.setItem('board', con[0]['code']);
@@ -168,9 +165,9 @@ function BottomPanel(){
     <div id="mainBottomPanel" className={currentScreen + 'On'}>
       <BottomPanelContent screen={currentScreen} swap={swapScreens}/>
         <div style={{width: '100vw', height: '7.5vh', display: "flex", justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: '2.5vh', backgroundColor: '#212529'}}>
-            <FaHome onClick={() => {if(currentScreen != 'home') swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <FaHome onClick={() => {if(currentScreen !== 'home') swapScreens('home')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
             <PiSquaresFourFill id='boards' onClick={() => {if(currentScreen != 'boards') swapScreens('boards')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
-            <IoIosSettings onClick= {() => {if(currentScreen != 'settings') swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
+            <IoIosSettings onClick= {() => {if(currentScreen !== 'settings') swapScreens('settings')}} size='4vh' style={{margin: '0 5vh 0 5vh'}}/>
         </div>
     </div>
   );
@@ -192,7 +189,7 @@ export default function MainPage(){
 
     for(let row = 0; row < Math.sqrt(tileNum); row++){
       for(let tile = 0; tile < Math.sqrt(tileNum); tile++){
-        tiles.push(<Tile size={tileSize} text={1 + row * Math.sqrt(tileNum) + tile}/>)
+        tiles.push(<Tile size={tileSize} id='Tile' text={1 + row * Math.sqrt(tileNum) + tile}/>)
       }
     }
 
