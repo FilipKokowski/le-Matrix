@@ -1,7 +1,8 @@
 //Icons
-import { FaPlus, FaEraser } from "react-icons/fa6";
+import { FaPlus, FaEraser, FaRegTrashCan } from "react-icons/fa6";
 import { AiOutlinePicture } from "react-icons/ai";
 import { CgColorPicker } from "react-icons/cg";
+
 
 
 //Functions
@@ -164,6 +165,10 @@ export function BoardAssembler(prop){
         await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
 
+    async function removeBoard(){        
+        await supabase.from('boards').delete().eq('id', id);
+    }
+
     async function updateSelected(){
         await supabase.from('system').update({selected: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
     }
@@ -195,7 +200,7 @@ export function BoardAssembler(prop){
 
     setTiles(tiles);
 
-    let title = (prop.board == null) ? <h1>Create new board</h1> : <h1>Edit your board</h1>;
+    let title = (prop.board == null) ? <h1>Create new board</h1> : <><h1>Edit your board</h1></>;
 
     return (
         <div>
@@ -206,7 +211,8 @@ export function BoardAssembler(prop){
             </div>
             <ToolBar tiles={tiles}/>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3vw'}}>
-                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '40vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {removeBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '10vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#aa4444', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><FaRegTrashCan size={'65%'}></FaRegTrashCan></button>
+                <button onClick={() => {if(prop.board == null) exportBoard(); else {updateBoard(window.localStorage.getItem('board'));} prop.update('homeOn'); prop.swap('home')}} style={{width: '30vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Save</button>
                 <button onClick={() => {if(prop.board == null) exportBoard(); else {updateSelected(window.localStorage.getItem('board')); updateBoard(window.localStorage.getItem('board'));} setSelected(localStorage.getItem('board'), getTilesColors()); prop.update('homeOn'); prop.swap('home');}} style={{width: '20vw', height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#554e6b', color: '#cfc1c1', fontWeight: 'bold', marginRight: '5vw'}}>Use</button>
                 <button style={{height: '10vw', border: 'none', borderRadius: '3vw', backgroundColor: '#5e3e4c', color: '#cfc1c1', fontWeight: 'bold'}}><label htmlFor='uploadImage' style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><AiOutlinePicture size={'7vw'}/></label></button>
                 <input type="file" onChange={() => {loadImage(setImage)}} id='uploadImage' hidden></input>
