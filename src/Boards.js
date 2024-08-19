@@ -8,7 +8,7 @@ import { CgColorPicker } from "react-icons/cg";
 //Functions
 import { useState, useEffect, React} from 'react';
 import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, id, setID } from './App';
-import { getDBBoards, getSelected, setSelected, supabase, getDBBoard, getBoardData} from "./dbFunctions";
+import { getDBBoards, getSelected, setSelected, supabase, getDBBoard, getBoardData, setBoardData} from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile, TileHandler } from './App';
@@ -163,9 +163,10 @@ export function BoardAssembler(prop){
     }
 
     async function updateBoard(){
-        console.log(getTilesColors().slice(0,255))
+        let name = document.getElementById('boardName').value;
         
-        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255)), name: document.getElementById('boardName').value}).eq('id', id);
+        await supabase.from('boards').update({board: JSON.stringify(getTilesColors().slice(0,255))}).eq('id', id);
+        await setBoardData(id, name, new Date().toJSON().slice(0,10));
     }
 
     async function removeBoard(){        
@@ -200,8 +201,8 @@ export function BoardAssembler(prop){
     setTiles(tiles);
 
     let title = (prop.board == null) ? 
-        <h1>Create <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1> 
-       :<h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Edit <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1>;
+        <h1>Create <input onChange={() => { document.getElementById('boardName').value = document.getElementById('boardName').value.toLowerCase()}} id="boardName" style={{height: '3vh', width: '22vh', fontSize: '3vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', backgroundColor: '#212529', borderRadius: '1vh'}} type="text" maxLength={10} defaultValue="Board"></input></h1> 
+       :<h1 onChange={() => { document.getElementById('boardName').value = document.getElementById('boardName').value.toLowerCase()}} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Edit <input id="boardName" style={{height: '3vh', width: '22vh', fontSize: '2.75vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', backgroundColor: '#212529', borderRadius: '1vh'}} type="text" maxLength={10} defaultValue={boardName}></input></h1>;
 
     return (
         <div>

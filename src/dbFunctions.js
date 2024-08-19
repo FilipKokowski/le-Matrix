@@ -109,7 +109,10 @@ export async function getBoardData(id){
 
 export async function setBoardData(id, name, date){
     if(name !== null && date === null)
-        await supabase.from('system').update({name: name}).eq('id', id);
+        await supabase.from('boards').update({name: name}).eq('id', id);
     else if(name === null && date !== null)
-        await supabase.from('system').update({date: date}).eq('id', id);
+        await supabase.from('boards').update({date_of_creation: date}).eq('id', id);
+    else
+        await supabase.from('boards').update({date_of_creation: date, name: name}).eq('id', id);
+
 }
