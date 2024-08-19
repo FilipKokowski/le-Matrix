@@ -103,7 +103,8 @@ export async function getNightModeScope(code){
 
 export async function getBoardData(id){
     const {data} = await supabase.from('boards').select().eq('id', id);
-    return [data[0]['name'], data[0]['date_of_creation']];
+
+    return [data[0]?.name, data[0]?.date_of_creation];
 }
 
 export async function setBoardData(id, name, date){

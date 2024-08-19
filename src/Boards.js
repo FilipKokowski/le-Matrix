@@ -150,7 +150,8 @@ export function BoardAssembler(prop){
 
     useEffect(() => {
         const fetchBoardName = async () => {
-            setBN((await getBoardData(id))[0]);
+            let name = (await getBoardData(id))[0];
+            setBN(name === undefined ? 'Board' : name);
         }
 
         fetchBoardName();
@@ -198,7 +199,9 @@ export function BoardAssembler(prop){
 
     setTiles(tiles);
 
-    let title = (prop.board == null) ? <h1 >Create <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1> : <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Edit <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1>;
+    let title = (prop.board == null) ? 
+        <h1>Create <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1> 
+       :<h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Edit <input id="boardName" style={{height: '3vh', width: '20vh', fontSize: '2vh', marginLeft: '1vh', fontWeight: 'bold', background: 'none', border: 'none', borderBottom: '2px solid'}} type="text" maxLength={10} defaultValue={boardName}></input></h1>;
 
     return (
         <div>
