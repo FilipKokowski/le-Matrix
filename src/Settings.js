@@ -114,14 +114,24 @@ function NightMode(prop){
     setMode(m);
   };
   
-  
+  const [NMScope, setNMScope] = useState();
+
+  useEffect(() => {
+      const fetchNMScope = async () => {
+          let scope = await getNightModeScope(window.localStorage.getItem('board'));
+          setNMScope(scope);
+      }
+
+      fetchNMScope();
+  }, [])
+
 
   return (
     <div>
       <h1>Night Mode</h1>
       <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-        <input id='from' type="time"></input>
-        <input id='to' type="time"></input>
+        <input id='from' type="time" defaultValue={NMScope?.[0]}></input>
+        <input id='to' type="time" defaultValue={NMScope?.[1]}></input>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
         <button onClick={() => {toggleNightMode(!nightMode); changeMode(-1); window.localStorage.setItem('nightMode', !nightMode)}} style={{marginTop: '4vw', width: '15vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (nightMode) ? '#77dd77' : '#ee6666', color: (nightMode) ? '#274f27': '#912a2a', fontWeight: 'bold'}}>Toggle</button>

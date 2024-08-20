@@ -8,7 +8,7 @@ import { CgColorPicker } from "react-icons/cg";
 //Functions
 import { useState, useEffect, React} from 'react';
 import { getConnected, swapClasses, setTiles, setColor, getColor, getTilesColors, id, setID } from './App';
-import { getDBBoards, getSelected, setSelected, supabase, getDBBoard, getBoardData, setBoardData} from "./dbFunctions";
+import { getDBBoards, getSelected, setSelected, supabase, getDBBoard, getBoardData, setBoardData, getNightModeScope} from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile, TileHandler } from './App';
@@ -152,6 +152,7 @@ export function BoardAssembler(prop){
         const fetchBoardName = async () => {
             let name = (await getBoardData(id))[0];
             setBN(name === undefined ? 'Board' : name);
+
         }
 
         fetchBoardName();

@@ -80,12 +80,42 @@ export async function setBrightness(code, brightness){
 }
 
 export async function setNightMode(code, from, to, dimmTo = '0'){
+
+    let date = new Date();
+    let tommorowsDate = new Date(new Date().setDate(date.getDate() + 1));
+    let theDayAfterTommorowDate = new Date(new Date().setDate(tommorowsDate.getDate() + 1))
+    
+    let today = console.log(date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2,0) + "-" + date.getDate().toString().padStart(2, 0));
+    let tommorow = console.log(tommorowsDate.getFullYear() + "-" + (tommorowsDate.getMonth() + 1).toString().padStart(2,0) + "-" + tommorowsDate.getDate().toString().padStart(2, 0));;
+    let theDayAfterTommorow = console.log(theDayAfterTommorowDate.getFullYear() + "-" + (theDayAfterTommorowDate.getMonth() + 1).toString().padStart(2,0) + "-" + theDayAfterTommorowDate.getDate().toString().padStart(2, 0));;
+
+    let fromDate = "";
+    let toDate = "";
+
+    if(from < to)
+        if(parseInt(from.substring(0,2)) * 60 + parseInt(from.substring(3,5)) >= parseInt(date.toLocaleTimeString('en-GB').split(':')[0] * 60 + parseInt(date.toLocaleTimeString('en-GB').split(':')[1]))){
+            fromDate = today;
+            toDate = today;
+        } else {
+            fromDate = tommorow;
+            toDate = tommorow;
+        }
+    else if(from > to) 
+        if(parseInt(from.substring(0,2)) * 60 + parseInt(from.substring(3,5)) >= parseInt(date.toLocaleTimeString('en-GB').split(':')[0] * 60 + parseInt(date.toLocaleTimeString('en-GB').split(':')[1]))){
+            fromDate = today;
+            toDate = tommorow;
+        } else {
+            fromDate = tommorow;
+            toDate = theDayAfterTommorow;
+        } 
+
+
     if(from === undefined || to === undefined)
         await supabase.from('system').update({from: null, to: null, mode: null, dimmTo: '0'}).eq('code', code);
     else if(dimmTo === 0)
-        await supabase.from('system').update({from: from, to: to, mode: 'turnOff', dimmTo: '0'}).eq('code', code);
+        await supabase.from('system').update({from: `${fromDate} ${from}`, to: `${toDate} ${to}`, mode: 'turnOff', dimmTo: '0'}).eq('code', code);
     else
-        await supabase.from('system').update({from: from, to: to, mode: 'dimmTo', dimmTo: dimmTo}).eq('code', code);
+        await supabase.from('system').update({from: `${fromDate} ${from}`, to: `${toDate} ${to}`, mode: 'dimmTo', dimmTo: dimmTo}).eq('code', code);
 
     console.log(dimmTo);
 }
@@ -94,7 +124,6 @@ export async function getNightMode(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     return data[0];
 }
-
 
 export async function getNightModeScope(code){
     const {data} = await supabase.from('system').select().eq('code', code);
