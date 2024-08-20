@@ -85,9 +85,9 @@ export async function setNightMode(code, from, to, dimmTo = '0'){
     let tommorowsDate = new Date(new Date().setDate(date.getDate() + 1));
     let theDayAfterTommorowDate = new Date(new Date().setDate(tommorowsDate.getDate() + 1))
     
-    let today = console.log(date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2,0) + "-" + date.getDate().toString().padStart(2, 0));
-    let tommorow = console.log(tommorowsDate.getFullYear() + "-" + (tommorowsDate.getMonth() + 1).toString().padStart(2,0) + "-" + tommorowsDate.getDate().toString().padStart(2, 0));;
-    let theDayAfterTommorow = console.log(theDayAfterTommorowDate.getFullYear() + "-" + (theDayAfterTommorowDate.getMonth() + 1).toString().padStart(2,0) + "-" + theDayAfterTommorowDate.getDate().toString().padStart(2, 0));;
+    let today = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2,0) + "-" + date.getDate().toString().padStart(2, 0);
+    let tommorow = tommorowsDate.getFullYear() + "-" + (tommorowsDate.getMonth() + 1).toString().padStart(2,0) + "-" + tommorowsDate.getDate().toString().padStart(2, 0);
+    let theDayAfterTommorow = theDayAfterTommorowDate.getFullYear() + "-" + (theDayAfterTommorowDate.getMonth() + 1).toString().padStart(2,0) + "-" + theDayAfterTommorowDate.getDate().toString().padStart(2, 0);
 
     let fromDate = "";
     let toDate = "";
@@ -127,7 +127,7 @@ export async function getNightMode(code){
 
 export async function getNightModeScope(code){
     const {data} = await supabase.from('system').select().eq('code', code);
-    return [data[0]['from'], data[0]['to']];
+    return [data[0]['from'].substring(11), data[0]['to'].substring(11)];
 }
 
 export async function getBoardData(id){
