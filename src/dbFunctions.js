@@ -100,7 +100,7 @@ export async function setNightMode(code, from, to, dimmTo = '0'){
             fromDate = tommorow;
             toDate = tommorow;
         }
-    else if(from > to) 
+    else if(from >= to) 
         if(parseInt(from.substring(0,2)) * 60 + parseInt(from.substring(3,5)) >= parseInt(date.toLocaleTimeString('en-GB').split(':')[0] * 60 + parseInt(date.toLocaleTimeString('en-GB').split(':')[1]))){
             fromDate = today;
             toDate = tommorow;
