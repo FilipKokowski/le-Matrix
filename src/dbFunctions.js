@@ -126,7 +126,7 @@ export async function getNightMode(code){
 export async function getNightModeScope(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     
-    return [data[0]['from'].substring(11), data[0]['to'].substring(11), new Date(data[0]['from']).toLocaleDateString('gb-GB', { weekday: 'long' }), new Date(data[0]['to']).toLocaleDateString('gb-GB', { weekday: 'long' })];
+    return [data[0]['from'].substring(11), data[0]['to'].substring(11), new Date(data[0]['from']).toLocaleDateString('en-GB', { weekday: 'long' }), new Date(data[0]['to']).toLocaleDateString('en-GB', { weekday: 'long' })];
 }
 
 export async function getBoardData(id){
