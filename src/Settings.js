@@ -130,11 +130,11 @@ function NightMode(prop){
     <div>
       <h1>Night Mode</h1>
       <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-        <div>
+        <div style={{textAlign: 'center'}}>
           <h2 style={{marginTop: '0'}}>{NMScope?.[2]}</h2>
           <input id='from' type="time" defaultValue={NMScope?.[0]}></input>
         </div>
-        <div>
+        <div style={{textAlign: 'center'}}>
           <h2 style={{marginTop: '0'}}>{NMScope?.[3]}</h2>
           <input id='to' type="time" defaultValue={NMScope?.[1]}></input>
         </div>
