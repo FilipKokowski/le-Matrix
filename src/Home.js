@@ -75,8 +75,8 @@ export function Home(prop){
     const now = new Date();
 
     let nowMins = (parseInt(now.toLocaleTimeString('en-GB').split(':')[0]) * 60) + parseInt(now.toLocaleTimeString('en-GB').split(':')[1])
-    let fromMins = (parseInt(NMInfo?.from.split(':')[0]) * 60) + parseInt(NMInfo?.from.split(':')[1])
-    let toMins = (parseInt(NMInfo?.to.split(':')[0]) * 60) + parseInt(NMInfo?.to.split(':')[1])
+    let fromMins = (parseInt(NMInfo?.from?.split(':')[0]) * 60) + parseInt(NMInfo?.from?.split(':')[1])
+    let toMins = (parseInt(NMInfo?.to?.split(':')[0]) * 60) + parseInt(NMInfo?.to?.split(':')[1])
 
     if(getConnected() && !boardAss){
 
