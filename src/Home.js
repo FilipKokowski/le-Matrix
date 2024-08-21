@@ -93,7 +93,7 @@ export function Home(prop){
             <h1>Home</h1>
             <div style={{display: 'flex', width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
                 <div style={{width: '50%', height: '100%'}}>
-                    {(NMInfo?.mode === 'turnOff' || NMInfo?.mode === 'dimmTo') ? <IoMoon color="#644c75" size={'4vh'} style={{position: 'absolute', left: '16vh', top: '9vh', zIndex: '100'}}></IoMoon> : <></>}
+                    {(NMInfo?.mode === 'turnOff' || NMInfo?.mode === 'dimmTo') ? <IoMoon color="#644c75" size={'4vh'} style={{position: 'absolute', left: '34vw', top: '19.5vw', zIndex: '100'}}></IoMoon> : <></>}
                     <Board id='current'/>
                 </div>
                 <div style={{width: '50%', height: '100%'}}>
