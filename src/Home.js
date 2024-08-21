@@ -72,6 +72,12 @@ export function Home(prop){
         fetchNMInfo();
     }, [])
 
+    const now = new Date();
+
+    let nowMins = (parseInt(now.toLocaleTimeString('en-GB').split(':')[0]) * 60) + parseInt(now.toLocaleTimeString('en-GB').split(':')[1])
+    let fromMins = (parseInt(NMInfo?.from.split(':')[0]) * 60) + parseInt(NMInfo?.from.split(':')[1])
+    let toMins = (parseInt(NMInfo?.to.split(':')[0]) * 60) + parseInt(NMInfo?.to.split(':')[1])
+
     if(getConnected() && !boardAss){
 
         const boardThumbnailSize = window.innerHeight / 100 * 15;
@@ -94,7 +100,7 @@ export function Home(prop){
             <div style={{display: 'flex', width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
                 <div style={{width: '50%', height: '100%'}}>
                     <div style={{width: '15vh', height: '15vh', position: 'relative'}}>
-                        {(NMInfo?.mode === 'turnOff' || NMInfo?.mode === 'dimmTo') ? <IoMoon color="#644c75" size={'4vh'} style={{position: 'absolute', left: '97.5%', top: '-5%', zIndex: '100'}}></IoMoon> : <></>}
+                        {(fromMins <= nowMins && nowMins < toMins) ? <IoMoon color="#644c75" size={'4vh'} style={{position: 'absolute', left: '97.5%', top: '-5%', zIndex: '100'}}></IoMoon> : <></>}
                         <Board id='current'/>
                     </div>
                 </div>
