@@ -1,11 +1,13 @@
 //Icons
 import { FaPowerOff } from "react-icons/fa6";
 import { FaInstagram} from "react-icons/fa";
+import { IoMoon } from "react-icons/io5";
+
 
 //Functions
 import { useState, useEffect, React} from 'react';
 import { getConnected, setTiles, swapClasses } from './App';
-import { setPowerState, getPowerState, getBoardData, getSelected } from "./dbFunctions";
+import { setPowerState, getPowerState, getBoardData, getSelected, getNightModeInfo } from "./dbFunctions";
 
 //Components
 import { NoConnection, Tile } from './App';
@@ -59,6 +61,17 @@ export function Home(prop){
         fetchBoardData();
     }, [])
 
+    const [NMInfo, setNMInfo] = useState();
+  
+    useEffect(() => {
+        const fetchNMInfo = async () => {
+            let info = await getNightModeInfo(window.localStorage.getItem('board'));
+            setNMInfo(info);
+        }
+  
+        fetchNMInfo();
+    }, [])
+
     if(getConnected() && !boardAss){
 
         const boardThumbnailSize = window.innerHeight / 100 * 15;
@@ -78,11 +91,16 @@ export function Home(prop){
         return (
         <div>
             <h1>Home</h1>
-            <div style={{width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
-                <Board id='current'/>
-                <h2 style={{marginTop: '0'}}>{boardName}</h2>
-                <h3>Set since {(boardDate !== '2001-01-01') ? boardDate : 'unknown'}</h3>
-                <button onClick={() => { prop.swap('boards');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
+            <div style={{display: 'flex', width: '42.5vh', height: '17vh', backgroundColor: '#303336', margin: '0 auto', paddingRight: '1.25vh', paddingTop: '2vh', borderRadius: '4vw'}}>
+                <div style={{width: '50%', height: '100%'}}>
+                    {(NMInfo?.mode === 'turnOff' || NMInfo?.mode === 'dimmTo') ? <IoMoon color="#644c75" size={'4vh'} style={{position: 'absolute', left: '16vh', top: '9vh', zIndex: '100'}}></IoMoon> : <></>}
+                    <Board id='current'/>
+                </div>
+                <div style={{width: '50%', height: '100%'}}>
+                    <h2 style={{marginTop: '0'}}>{boardName}</h2>
+                    <h3>Set since {(boardDate !== '2001-01-01') ? boardDate : 'unknown'}</h3>
+                    <button onClick={() => { prop.swap('boards');}} style={{width: '20vh', height: '5vh', border: 'none', borderRadius: '2vh', backgroundColor: '#212529', color: '#cfc1c1', fontWeight: 'bold', fontSize: '1.75vh'}}>Change board</button>
+                </div>
             </div>
             <div style={{width:'100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1.5vh'}}>
                 <div>

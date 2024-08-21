@@ -106,8 +106,6 @@ export function Settings(){
 }
 
 function NightMode(prop){
-
-  const [nightMode, toggleNightMode] = useState(window.localStorage.getItem('nightMode') === "true");
   
   const [NMInfo, setNMInfo] = useState();
   
@@ -120,6 +118,8 @@ function NightMode(prop){
       fetchNMInfo();
   }, [])
 
+  const [nightMode, toggleNightMode] = useState();
+
   const [mode, setMode] = useState();
   const changeMode = (m) => {
     setMode(m);
@@ -127,6 +127,7 @@ function NightMode(prop){
 
   useEffect(() => {
     setMode(NMInfo?.mode === 'turnOff' ? 2 : NMInfo?.mode === "dimmTo" ? 3 : -1);
+    toggleNightMode(NMInfo?.mode !== null);
   },[NMInfo])
 
   return (

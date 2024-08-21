@@ -94,10 +94,8 @@ export async function setNightMode(code, from, to, dimmTo = '0'){
 export async function getNightModeInfo(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     
-    let fromSecs = parseInt(data[0]['from'].substring(0,2)) * 60 + parseInt(data[0]['from'].substring(3,5));
-    let toSecs = parseInt(data[0]['to'].substring(0,2)) * 60 + parseInt(data[0]['to'].substring(3,5))
-
-    console.log(fromSecs < toSecs)
+    let fromSecs = parseInt(data[0]['from']?.substring(0,2)) * 60 + parseInt(data[0]['from']?.substring(3,5));
+    let toSecs = parseInt(data[0]['to']?.substring(0,2)) * 60 + parseInt(data[0]['to']?.substring(3,5))
 
     let fromDayName = new Date().toLocaleDateString('en-GB', { weekday: 'long' });
     let toDayName = (fromSecs < toSecs) ? new Date().toLocaleDateString('en-GB', { weekday: 'long' }) : new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('en-GB', { weekday: 'long' });

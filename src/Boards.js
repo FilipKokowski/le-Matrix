@@ -41,7 +41,7 @@ export function Board(prop){
 
     if(prop.id)
         return (
-        <div onClick={prop.onClick} style={{width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '5vw', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
+        <div onClick={prop.onClick} style={{position: 'relative', width: '15vh', height: '15vh', minWidth: '15vh', backgroundColor: '#303336', borderRadius: '5vw', float: 'left', margin: '0 2.5vh 0 2.5vh', overflow: "hidden"}}>
             {/* Thumbnail of the board*/}
             {board}
         </div>
