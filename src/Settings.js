@@ -5,7 +5,7 @@ import { IoLogInOutline } from "react-icons/io5";
 
 //Functions
 import { useState, React, useEffect} from 'react';
-import { clearDB, setNightMode, setBrightness, getNightModeScope } from "./dbFunctions";
+import { clearDB, setNightMode, setBrightness, getNightModeInfo } from "./dbFunctions";
 
 //Components
 import { NoConnection, setConnected, getConnected, swapClasses } from './App';
@@ -108,42 +108,45 @@ export function Settings(){
 function NightMode(prop){
 
   const [nightMode, toggleNightMode] = useState(window.localStorage.getItem('nightMode') === "true");
+  
+  const [NMInfo, setNMInfo] = useState();
+  
+  useEffect(() => {
+      const fetchNMInfo = async () => {
+          let info = await getNightModeInfo(window.localStorage.getItem('board'));
+          setNMInfo(info);
+      }
 
-  const [mode, setMode] = useState(-1);
+      fetchNMInfo();
+  }, [])
+
+  const [mode, setMode] = useState();
   const changeMode = (m) => {
     setMode(m);
   };
-  
-  const [NMScope, setNMScope] = useState();
-  
+
   useEffect(() => {
-      const fetchNMScope = async () => {
-          let scope = await getNightModeScope(window.localStorage.getItem('board'));
-          setNMScope(scope);
-      }
-
-      fetchNMScope();
-  }, [])
-
+    setMode(NMInfo?.mode === 'turnOff' ? 2 : NMInfo?.mode === "dimmTo" ? 3 : -1);
+  },[NMInfo])
 
   return (
     <div>
       <h1>Night Mode</h1>
       <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
         <div style={{textAlign: 'center'}}>
-          <h2 style={{marginTop: '0'}}>{NMScope?.[2]}</h2>
-          <input id='from' type="time" defaultValue={NMScope?.[0]}></input>
+          <h2 style={{marginTop: '0'}}>{NMInfo?.fromDayName}</h2>
+          <input id='from' type="time" defaultValue={NMInfo?.from}></input>
         </div>
         <div style={{textAlign: 'center'}}>
-          <h2 style={{marginTop: '0'}}>{NMScope?.[3]}</h2>
-          <input id='to' type="time" defaultValue={NMScope?.[1]}></input>
+          <h2 style={{marginTop: '0'}}>{NMInfo?.toDayName}</h2>
+          <input id='to' type="time" defaultValue={NMInfo?.to}></input>
         </div>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
         <button onClick={() => {toggleNightMode(!nightMode); changeMode(-1); window.localStorage.setItem('nightMode', !nightMode)}} style={{marginTop: '4vw', width: '15vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (nightMode) ? '#77dd77' : '#ee6666', color: (nightMode) ? '#274f27': '#912a2a', fontWeight: 'bold'}}>Toggle</button>
         <button onClick={() => {if(!nightMode) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board')); } else if(document.getElementById('from').value !== '' && document.getElementById('to').value !== '' && (!isNaN(parseInt(document.getElementById('dimmTo').value)) || mode === 2)) {prop.toggleNightMode(); setNightMode(window.localStorage.getItem('board'), document.getElementById('from').value, document.getElementById('to').value, (mode === 2) ? 0 : document.getElementById('dimmTo').value);}}} style={{marginTop: '4vw', width: '10vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: '#303336', color: '#cfc1c1', fontWeight: 'bold'}}>Set</button>
         <button onClick={() => {if(nightMode) changeMode(2)}} style={{marginTop: '4vw', width: '20vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 2) ? '#cfc1c1' : '#303336', color: (mode === 2) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Turn off</button>
-        <button onClick={() => {if(nightMode) changeMode(3)}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 3) ? '#cfc1c1' : '#303336', color: (mode === 3) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Dimm to <input id='dimmTo' type="text" maxLength={2} style={{background: 'transparent', width: '6vw', border: 'none', color: (mode === 3) ? '#303336': '#cfc1c1', borderBottom: '1px solid'}}></input> %</button>
+        <button onClick={() => {if(nightMode) changeMode(3)}} style={{marginTop: '4vw', width: '27vw', height: '10vw', border: 'none', borderRadius: '2vw', backgroundColor: (mode === 3) ? '#cfc1c1' : '#303336', color: (mode === 3) ? '#303336': '#cfc1c1', fontWeight: 'bold'}}>Dimm to <input id='dimmTo' type="text" maxLength={2} style={{background: 'transparent', width: '6vw', border: 'none', color: (mode === 3) ? '#303336': '#cfc1c1', borderBottom: '1px solid'}} defaultValue={NMInfo?.dimmTo}></input> %</button>
       </div>
     </div>
   )

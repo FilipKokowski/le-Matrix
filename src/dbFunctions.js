@@ -118,15 +118,11 @@ export async function setNightMode(code, from, to, dimmTo = '0'){
 
 }
 
-export async function getNightMode(code){
-    const {data} = await supabase.from('system').select().eq('code', code);
-    return data[0];
-}
 
-export async function getNightModeScope(code){
+export async function getNightModeInfo(code){
     const {data} = await supabase.from('system').select().eq('code', code);
     
-    return [data[0]['from'].substring(11), data[0]['to'].substring(11), new Date(data[0]['from']).toLocaleDateString('en-GB', { weekday: 'long' }), new Date(data[0]['to']).toLocaleDateString('en-GB', { weekday: 'long' })];
+    return { from: data[0]['from'].substring(11), fromDayName: new Date(data[0]['from']).toLocaleDateString('en-GB', { weekday: 'long' }), to: data[0]['to'].substring(11), toDayName: new Date(data[0]['to']).toLocaleDateString('en-GB', { weekday: 'long' }), mode: data[0]['mode'], dimmTo: data[0]['dimmTo']};
 }
 
 export async function getBoardData(id){
